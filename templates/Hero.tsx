@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // icons
-import { ArrowRight } from "lucide-react";
-import { ChevronDownIcon } from "lucide-react";
+import { ArrowRight, ChevronDownIcon, Loader2 } from "lucide-react";
 
 // components
 import {
@@ -32,14 +32,48 @@ import {
   REOCCURENCE_OPTIONS,
 } from "@/data/cleaningOptions";
 
+// 🧠 store
+import { useBookingStore } from "@/store/useBookingStore";
+import { Spinner } from "@/components/ui/spinner";
+
 const Hero = () => {
+  const router = useRouter();
+  const { booking, updateBooking } = useBookingStore();
+
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
 
+  const [localForm, setLocalForm] = useState({
+    serviceType: booking.serviceType || "",
+    cleaningType: booking.cleaningType || "",
+    address: booking.address || "",
+    county: booking.county || "",
+    reoccurrence: booking.reoccurrence || "",
+    date: booking.date || undefined,
+  });
+
+  const handleChange = (key: string, value: any) => {
+    setLocalForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleQuote = () => {
+    updateBooking("serviceType", localForm.serviceType);
+    updateBooking("cleaningType", localForm.cleaningType);
+    updateBooking("address", localForm.address);
+    updateBooking("county", localForm.county);
+    updateBooking("reoccurrence", localForm.reoccurrence);
+    updateBooking("date", localForm.date);
+
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      router.push("/booking");
+    }, 3500);
+  };
   return (
     <section className="relative overflow-hidden pt-20 pb-24 md:pt-16 md:pb-32">
       <div className="absolute -top-[100px] inset-0 -z-10 w-full h-full hidden sm:block">
-        {/* Light mode image */}
         <Image
           src="/hero_splash-light.svg"
           alt="Decorative colorful background shapes (light)"
@@ -47,7 +81,7 @@ const Hero = () => {
           className="object-cover object-center opacity-90 dark:hidden"
           priority
         />
-        {/* Dark mode image */}
+
         <Image
           src="/hero-splash-dark.svg"
           alt="Decorative colorful background shapes (dark)"
@@ -80,8 +114,8 @@ const Hero = () => {
           seconds.
         </p>
 
-        <div className="mt-10 bg-white dark:bg-[#1E1E1E] border-[0.2px] border-[#C8BCDF] dark:border-gray-800 rounded-[8px] py-6 sm:p-8 px-4 max-w-[750px] mx-auto">
-          <div className="flex justify-between items-center mb-[24px]">
+        <div className="mt-10 bg-white dark:bg-[#1E1E1E] border-[0.2px] border-[#C8BCDF] dark:border-gray-800 rounded-xl py-6 sm:p-8 px-4 max-w-[750px] mx-auto">
+          <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 text-start">
               Book Cleaning
             </h3>
@@ -100,7 +134,7 @@ const Hero = () => {
               </div>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-[32px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
             <div>
               <label
                 htmlFor="serviceType"
@@ -108,7 +142,10 @@ const Hero = () => {
               >
                 Service Type
               </label>
-              <Select>
+              <Select
+                value={localForm.serviceType}
+                onValueChange={(value) => handleChange("serviceType", value)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select service type" />
                 </SelectTrigger>
@@ -129,7 +166,10 @@ const Hero = () => {
               >
                 Type of cleaning
               </label>
-              <Select>
+              <Select
+                value={localForm.cleaningType}
+                onValueChange={(value) => handleChange("cleaningType", value)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select cleaning type" />
                 </SelectTrigger>
@@ -149,7 +189,11 @@ const Hero = () => {
               >
                 Address
               </label>
-              <Input className="w-full" placeholder="Enter your address" />
+              <Input
+                className="w-full"
+                placeholder="Enter your address"
+                onChange={(e) => handleChange("address", e.target.value)}
+              />
             </div>
             <div>
               <label
@@ -161,6 +205,7 @@ const Hero = () => {
               <Input
                 className="w-full"
                 placeholder="Enter your county/province"
+                onChange={(e) => handleChange("county", e.target.value)}
               />
             </div>
 
@@ -171,7 +216,10 @@ const Hero = () => {
               >
                 Reoccurence
               </label>
-              <Select>
+              <Select
+                value={localForm.reoccurrence}
+                onValueChange={(value) => handleChange("reoccurrence", value)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
@@ -196,11 +244,12 @@ const Hero = () => {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    id="date"
                     className="w-full justify-between font-normal py-5"
                   >
-                    {date ? date.toLocaleDateString() : "Select date"}
-                    <ChevronDownIcon />
+                    {localForm.date
+                      ? localForm.date.toLocaleDateString()
+                      : "Select date"}
+                    <ChevronDownIcon className="ml-2" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
@@ -209,10 +258,9 @@ const Hero = () => {
                 >
                   <Calendar
                     mode="single"
-                    selected={date}
-                    captionLayout="dropdown"
+                    selected={localForm.date}
                     onSelect={(date) => {
-                      setDate(date);
+                      handleChange("date", date);
                       setOpen(false);
                     }}
                   />
@@ -224,7 +272,19 @@ const Hero = () => {
             Get a Quote
           </button> */}
           <Link href="/booking">
-            <Button className="w-full py-6 mt-6">Get a Quote</Button>
+            <Button
+              className="w-full py-6 mt-6 text-white"
+              onClick={handleQuote}
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <Spinner />
+                </span>
+              ) : (
+                "Get a Quote"
+              )}
+            </Button>
           </Link>
         </div>
 
