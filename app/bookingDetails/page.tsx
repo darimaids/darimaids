@@ -2,12 +2,72 @@
 
 import React from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 
-const page = () => {
+// components
+import { Button } from "@/components/ui/button";
+import { InfoRow } from "@/components/ui/inforow";
+import { Divider } from "@/components/ui/divider";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
+
+// store
+import { useBookingStore } from "@/store/useBookingStore";
+
+// api
+import { createBooking } from "@/services/booking/customerBooking";
+
+const BookingDetailsPage = () => {
   const router = useRouter();
+  const { booking, payment } = useBookingStore();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        fullName: payment.fullName,
+        email: payment.email,
+        phoneNumber: payment.phone,
+        address: booking.address,
+        province: booking.state,
+        zipCode: booking.zipCode,
+        services: booking.cleaningType || booking.serviceType,
+        cleaners: booking.bedrooms || "1",
+        date: booking.date
+          ? booking.date.toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
+        time: "10am", // You can make this dynamic later if needed
+        serviceType: booking.serviceType || "Standard cleaning",
+        duration: "3hrs",
+        addon:
+          booking.selectedAddons.length > 0
+            ? booking.selectedAddons.join(", ")
+            : "none",
+        specialInstructions: booking.specialRequests || "",
+        frequency: booking.reoccurrence || "one-time",
+        charge: booking.totalPrice?.toString() || "0",
+      };
+
+      const response = await createBooking(payload);
+      return response;
+    },
+    onSuccess: (res: any) => {
+      if (res?.success && res?.data?.checkoutUrl) {
+        window.open(res.data.checkoutUrl, "_blank");
+      } else {
+        toast.info("Booking created, but no checkout URL found.");
+      }
+    },
+    onError: (error: any) => {
+      console.error("Booking creation failed:", error);
+      toast.error("Failed to create booking. Please try again.");
+    },
+  });
+
+  const handleBooking = () => {
+    mutate();
+  };
+
   return (
     <div className="py-12 px-4 sm:px-8 md:px-16 lg:px-[286px] bg-white dark:bg-[#0D0D0D] text-[#1F2937] dark:text-gray-100 transition-colors duration-300">
       <div className="flex justify-center items-center mb-8">
@@ -26,140 +86,133 @@ const page = () => {
           />
         </div>
       </div>
+
       <div className="flex justify-center items-center">
-        <div className="rounded-[8px] bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5 w-[829px]">
+        <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5 w-[829px]">
           <h1 className="font-semibold text-xl">Booking Summary</h1>
 
-          <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-[8px] p-5">
+          <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-5">
+            {/* Personal Information */}
             <div className="mb-6">
               <h2 className="font-semibold text-lg mb-4">
                 Personal Information
               </h2>
               <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Name</span>
-                  <span className="font-medium">George Olufemi</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Phone number
-                  </span>
-                  <span className="font-medium">+234810109892</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Email Address
-                  </span>
-                  <span className="font-medium">george@usecentry.com</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Address Line 1
-                  </span>
-                  <span className="font-medium">
-                    2nd House, Redemption Estate
-                  </span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Address Line 2
-                  </span>
-                  <span className="font-medium">Off Two-lane Rd</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    ZIP Code
-                  </span>
-                  <span className="font-medium">542110</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Province
-                  </span>
-                  <span className="font-medium">North Darkota</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    State
-                  </span>
-                  <span className="font-medium">South Carolina</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                <InfoRow label="Name" value={payment.fullName} />
+                <Divider />
+                <InfoRow label="Phone number" value={payment.phone} />
+                <Divider />
+                <InfoRow label="Email Address" value={payment.email} />
+                <Divider />
+                <InfoRow label="Street Address" value={booking.address} />
+                <Divider />
+                <InfoRow label="City" value={booking.city} />
+                <Divider />
+                <InfoRow label="ZIP Code" value={booking.zipCode} />
+                <Divider />
+                <InfoRow label="County" value={booking.county} />
+                <Divider />
+                <InfoRow label="State" value={booking.state} />
               </div>
             </div>
 
-            {/* Booking Information Section */}
+            {/* Booking Information */}
             <div className="mb-6">
               <h2 className="font-semibold text-lg mb-4">
                 Booking Information
               </h2>
               <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Service
-                  </span>
-                  <span className="font-medium">Deep clean/Move in</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Date</span>
-                  <span className="font-medium">25th October 2025</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Time</span>
-                  <span className="font-medium">4PM - 5PM</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Frequency
-                  </span>
-                  <span className="font-medium">
-                    One-time re-occurence (No discount)
-                  </span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Cleaners
-                  </span>
-                  <span className="font-medium">2 Cleaners</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Duration
-                  </span>
-                  <span className="font-medium">3 Hours</span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Add-ons
-                  </span>
-                  <span className="font-medium text-right max-w-[200px]">
-                    Inside fridge, Oven interior, Wall washing, Laundry
-                  </span>
-                </div>
+                <InfoRow
+                  label="Service"
+                  value={
+                    booking.serviceType
+                      ? booking.serviceType.replace("-", " ").toUpperCase()
+                      : "N/A"
+                  }
+                />
+                <Divider />
+                <InfoRow
+                  label="Cleaning Type"
+                  value={
+                    booking.cleaningType
+                      ? booking.cleaningType.replace("-", " ")
+                      : "N/A"
+                  }
+                />
+                <Divider />
+                <InfoRow
+                  label="Square Footage"
+                  value={
+                    booking.squareFootage
+                      ? `${booking.squareFootage} sqft`
+                      : "N/A"
+                  }
+                />
+                <Divider />
+                <InfoRow
+                  label="Bedrooms"
+                  value={booking.bedrooms ? `${booking.bedrooms}` : "N/A"}
+                />
+                <Divider />
+                <InfoRow
+                  label="Bathrooms"
+                  value={booking.bathrooms ? `${booking.bathrooms}` : "N/A"}
+                />
+                <Divider />
+                <InfoRow
+                  label="Date"
+                  value={
+                    booking.date
+                      ? booking.date.toLocaleDateString()
+                      : "Not selected"
+                  }
+                />
+                <Divider />
+                <InfoRow
+                  label="Reoccurrence"
+                  value={booking.reoccurrence || "One-time"}
+                />
+                <Divider />
+                <InfoRow label="Pets" value={booking.pets || "N/A"} />
+                <Divider />
+                <InfoRow
+                  label="Add-ons"
+                  value={
+                    booking.selectedAddons.length > 0
+                      ? booking.selectedAddons.join(", ")
+                      : "No add-ons selected"
+                  }
+                />
+                <Divider />
+                <InfoRow
+                  label="Special Requests"
+                  value={booking.specialRequests || "None"}
+                />
               </div>
             </div>
 
+            {/* Divider */}
             <div className="border-t border-gray-200 dark:border-gray-700 my-6"></div>
 
+            {/* Total Summary */}
+            <div className="flex justify-between text-lg font-semibold mb-6">
+              <span>Total Estimate:</span>
+              <span>
+                $
+                {booking.totalPrice
+                  ? booking.totalPrice.toFixed(2)
+                  : "Calculated at confirmation"}
+              </span>
+            </div>
+
+            {/* Pay Button */}
             <div className="flex justify-center">
               <Button
-                onClick={() => router.push("/bookingSuccess")}
+                disabled={isPending}
+                onClick={handleBooking}
                 className="w-full text-white px-8 py-5 rounded-lg font-semibold transition-colors duration-300"
               >
-                Pay
+                {isPending ? <Spinner /> : "Pay"}
               </Button>
             </div>
           </div>
@@ -169,4 +222,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default BookingDetailsPage;

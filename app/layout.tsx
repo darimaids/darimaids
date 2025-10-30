@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
 import { Almarai } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/utils/theme-provider";
+
+// components
 import Header from "@/components/ui/header";
 import Footer from "@/components/ui/footer";
+import { Toaster } from "@/components/ui/sonner";
+
+// util
+import { ThemeProvider } from "@/utils/theme-provider";
+
+// provider
+import ReactQueryClientProvider from "@/provider/ReactQueryClientProvider";
 
 const almarai = Almarai({
   subsets: ["arabic", "latin"],
@@ -37,9 +45,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          {children}
-          <Footer />
+          <ReactQueryClientProvider>
+            <Header />
+            {children}
+            <Toaster position="top-center" richColors />
+            <Footer />
+          </ReactQueryClientProvider>
         </ThemeProvider>
       </body>
     </html>

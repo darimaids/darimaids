@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+// components
 import {
   Select,
   SelectContent,
@@ -29,69 +31,32 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Spinner } from "@/components/ui/spinner";
 
+// data
 import {
   SERVICE_TYPES,
   CLEANING_TYPES,
   REOCCURENCE_OPTIONS,
 } from "@/data/cleaningOptions";
 import { SERVICES } from "@/data/services";
-import { ChevronDownIcon, TriangleAlert } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-interface BookingState {
-  serviceType: string;
-  cleaningType: string;
-  squareFootage: string;
-  bedrooms: string;
-  bathrooms: string;
-  address: string;
-  city: string;
-  zipCode: string;
-  state: string;
-  county: string;
-  phone: string;
-  email: string;
-  date: Date | undefined;
-  reoccurrence: string;
-  lastCleaning: string;
-  pets: string;
-  specialRequests: string;
-  selectedAddons: string[];
-  discountCode: string;
-}
+// icons
+import { ChevronDownIcon, TriangleAlert } from "lucide-react";
+
+// store
+import { useBookingStore } from "@/store/useBookingStore";
 
 const Booking = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [paymentDetails, setPaymentDetails] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-  });
+  const [loading, setLoading] = useState(false);
 
-  const [bookingState, setBookingState] = useState<BookingState>({
-    serviceType: "",
-    cleaningType: "",
-    squareFootage: "",
-    bedrooms: "",
-    bathrooms: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    state: "",
-    county: "",
-    phone: "",
-    email: "",
-    date: undefined,
-    reoccurrence: "",
-    lastCleaning: "",
-    pets: "",
-    specialRequests: "",
-    selectedAddons: [],
-    discountCode: "",
-  });
+  const booking = useBookingStore((state) => state.booking);
+  const payment = useBookingStore((state) => state.payment);
+  const updateBooking = useBookingStore((state) => state.updateBooking);
+  const updatePayment = useBookingStore((state) => state.updatePayment);
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [basePrice, setBasePrice] = useState(0);
@@ -99,7 +64,7 @@ const Booking = () => {
   const [discountAmount, setDiscountAmount] = useState(0);
 
   const COUNTIES = ["Palm Beach", "Broward", "Miami-Dade"];
-  const STATES = ["FL"];
+  const STATES = ["Florida", "North Carolina", "Alaska", "New York", "New Hampshire"];
   const LAST_CLEANING_OPTIONS = [
     { value: "1-week", label: "1 Week Ago" },
     { value: "1-month", label: "1 Month Ago" },
@@ -110,7 +75,6 @@ const Booking = () => {
     { value: "small", label: "Small Pets" },
     { value: "large", label: "Large Pets" },
   ];
-
   const ADD_ONS = [
     "Appliance Cleaning",
     "Cabinet Cleaning",
@@ -123,17 +87,26 @@ const Booking = () => {
     "Inside Fridge",
   ];
 
+  //* recalculate pricing whenever relevant booking data changes
   useEffect(() => {
     calculatePricing();
-  }, [bookingState]);
+  }, [
+    booking.serviceType,
+    booking.cleaningType,
+    booking.squareFootage,
+    booking.bedrooms,
+    booking.bathrooms,
+    booking.selectedAddons,
+    booking.reoccurrence,
+  ]);
 
   const calculatePricing = () => {
     let base = 0;
-    const addons = bookingState.selectedAddons.length * 25;
+    const addons = booking.selectedAddons.length * 25;
 
-    switch (bookingState.serviceType) {
+    switch (booking.serviceType) {
       case "standard-cleaning":
-        switch (bookingState.cleaningType) {
+        switch (booking.cleaningType) {
           case "studio":
             base = 130;
             break;
@@ -147,21 +120,19 @@ const Booking = () => {
             base = 290;
             break;
           case "1500-sqft-plus":
-            base = bookingState.squareFootage
-              ? Math.max(290, parseFloat(bookingState.squareFootage) * 0.18)
+            base = booking.squareFootage
+              ? Math.max(290, parseFloat(booking.squareFootage) * 0.18)
               : 0;
             break;
         }
         break;
-
       case "deep-cleaning":
-        base = bookingState.squareFootage
-          ? parseFloat(bookingState.squareFootage) * 0.23
+        base = booking.squareFootage
+          ? parseFloat(booking.squareFootage) * 0.23
           : 0;
         break;
-
       case "move-in-out":
-        switch (bookingState.cleaningType) {
+        switch (booking.cleaningType) {
           case "studio":
             base = 250;
             break;
@@ -175,50 +146,37 @@ const Booking = () => {
             base = 350;
             break;
           case "1500-sqft-plus":
-            base = bookingState.squareFootage
-              ? Math.max(350, parseFloat(bookingState.squareFootage) * 0.3)
+            base = booking.squareFootage
+              ? Math.max(350, parseFloat(booking.squareFootage) * 0.3)
               : 0;
             break;
         }
         break;
-
       case "white-glove":
         base = 200;
-        if (bookingState.bedrooms)
-          base += (parseInt(bookingState.bedrooms) - 1) * 50;
-        if (bookingState.bathrooms)
-          base += (parseInt(bookingState.bathrooms) - 1) * 50;
-        if (
-          bookingState.squareFootage &&
-          parseFloat(bookingState.squareFootage) > 2000
-        ) {
-          base = Math.max(base, parseFloat(bookingState.squareFootage) * 0.2);
+        if (booking.bedrooms) base += (parseInt(booking.bedrooms) - 1) * 50;
+        if (booking.bathrooms) base += (parseInt(booking.bathrooms) - 1) * 50;
+        if (booking.squareFootage && parseFloat(booking.squareFootage) > 2000) {
+          base = Math.max(base, parseFloat(booking.squareFootage) * 0.2);
         }
         break;
-
       case "airbnb-turnover":
         base = 140;
-        if (bookingState.bedrooms && parseInt(bookingState.bedrooms) > 1) {
-          base += (parseInt(bookingState.bedrooms) - 1) * 40;
-        }
-        if (bookingState.bathrooms && parseInt(bookingState.bathrooms) > 1) {
-          base += (parseInt(bookingState.bathrooms) - 1) * 40;
-        }
-        if (
-          bookingState.squareFootage &&
-          parseFloat(bookingState.squareFootage) > 1200
-        ) {
-          base = Math.max(base, parseFloat(bookingState.squareFootage) * 0.23);
+        if (booking.bedrooms && parseInt(booking.bedrooms) > 1)
+          base += (parseInt(booking.bedrooms) - 1) * 40;
+        if (booking.bathrooms && parseInt(booking.bathrooms) > 1)
+          base += (parseInt(booking.bathrooms) - 1) * 40;
+        if (booking.squareFootage && parseFloat(booking.squareFootage) > 1200) {
+          base = Math.max(base, parseFloat(booking.squareFootage) * 0.23);
         }
         break;
-
       case "custom-clean":
         base = 130;
         break;
     }
 
     let discount = 0;
-    switch (bookingState.reoccurrence) {
+    switch (booking.reoccurrence) {
       case "weekly":
         discount = base * 0.15;
         break;
@@ -233,39 +191,28 @@ const Booking = () => {
     setBasePrice(base);
     setAddonsPrice(addons);
     setDiscountAmount(discount);
-    setTotalPrice(base + addons - discount);
-  };
-
-  const handleInputChange = (field: keyof BookingState, value: any) => {
-    setBookingState((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    // setTotalPrice(base + addons - discount);
+    const total = base + addons - discount;
+    setTotalPrice(total);
+    updateBooking("totalPrice", total);
   };
 
   const handleAddonChange = (addon: string, checked: boolean) => {
-    if (checked) {
-      setBookingState((prev) => ({
-        ...prev,
-        selectedAddons: [...prev.selectedAddons, addon],
-      }));
-    } else {
-      setBookingState((prev) => ({
-        ...prev,
-        selectedAddons: prev.selectedAddons.filter((a) => a !== addon),
-      }));
-    }
+    const current = booking.selectedAddons;
+    const updated = checked
+      ? [...current, addon]
+      : current.filter((a) => a !== addon);
+    updateBooking("selectedAddons", updated);
   };
 
   const getServiceDescription = () => {
     const service = SERVICES.find(
       (s) =>
-        s.id === bookingState.serviceType.replace("-cleaning", "") ||
-        s.id === bookingState.serviceType
+        s.id === booking.serviceType.replace("-cleaning", "") ||
+        s.id === booking.serviceType
     );
     return service?.description || "";
   };
-
   return (
     <div className="py-12 px-4 sm:px-8 md:px-12 lg:px-[286px] bg-white dark:bg-[#0D0D0D] text-[#1F2937] dark:text-gray-100 transition-colors duration-300">
       <div className="flex justify-center items-center mb-8">
@@ -285,22 +232,19 @@ const Booking = () => {
         </div>
       </div>
       <div className="flex flex-col lg:flex-row justify-between gap-8">
-        {/* Left Section */}
         <div className="w-full lg:w-[70%] space-y-5">
-          {/* Booking Form */}
-          <div className="rounded-[8px] bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
+          <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
             <h1 className="font-semibold text-xl">Booking</h1>
-            <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-[8px] p-5">
+            <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Service Type */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Service Type *
                   </label>
                   <Select
-                    value={bookingState.serviceType}
+                    value={booking.serviceType}
                     onValueChange={(value) =>
-                      handleInputChange("serviceType", value)
+                      updateBooking("serviceType", value)
                     }
                   >
                     <SelectTrigger className="w-full">
@@ -316,15 +260,14 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* Type of Cleaning */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Type of Cleaning *
                   </label>
                   <Select
-                    value={bookingState.cleaningType}
+                    value={booking.cleaningType}
                     onValueChange={(value) =>
-                      handleInputChange("cleaningType", value)
+                      updateBooking("cleaningType", value)
                     }
                   >
                     <SelectTrigger className="w-full">
@@ -340,31 +283,27 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* Square Footage */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Square Foot Est. *
                   </label>
                   <Input
                     placeholder="Enter square footage"
-                    value={bookingState.squareFootage}
+                    value={booking.squareFootage}
                     onChange={(e) =>
-                      handleInputChange("squareFootage", e.target.value)
+                      updateBooking("squareFootage", e.target.value)
                     }
                     type="number"
                   />
                 </div>
 
-                {/* Number of Bedrooms */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Number of Bedrooms *
                   </label>
                   <Select
-                    value={bookingState.bedrooms}
-                    onValueChange={(value) =>
-                      handleInputChange("bedrooms", value)
-                    }
+                    value={booking.bedrooms}
+                    onValueChange={(value) => updateBooking("bedrooms", value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select bedrooms" />
@@ -378,16 +317,13 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* Number of Bathrooms */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Number of Bathrooms *
                   </label>
                   <Select
-                    value={bookingState.bathrooms}
-                    onValueChange={(value) =>
-                      handleInputChange("bathrooms", value)
-                    }
+                    value={booking.bathrooms}
+                    onValueChange={(value) => updateBooking("bathrooms", value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select bathrooms" />
@@ -401,15 +337,14 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* Last Cleaning */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Last Time You Had a Cleaning *
                   </label>
                   <Select
-                    value={bookingState.lastCleaning}
+                    value={booking.lastCleaning}
                     onValueChange={(value) =>
-                      handleInputChange("lastCleaning", value)
+                      updateBooking("lastCleaning", value)
                     }
                   >
                     <SelectTrigger className="w-full">
@@ -425,54 +360,46 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* Address */}
                 <div className="sm:col-span-2">
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Street Address *
                   </label>
                   <Input
                     placeholder="Enter your street address"
-                    value={bookingState.address}
-                    onChange={(e) =>
-                      handleInputChange("address", e.target.value)
-                    }
+                    value={booking.address}
+                    onChange={(e) => updateBooking("address", e.target.value)}
                   />
                 </div>
 
-                {/* City */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     City *
                   </label>
                   <Input
                     placeholder="Enter your city"
-                    value={bookingState.city}
-                    onChange={(e) => handleInputChange("city", e.target.value)}
+                    value={booking.city}
+                    onChange={(e) => updateBooking("city", e.target.value)}
                   />
                 </div>
 
-                {/* Zip Code */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Zip Code *
                   </label>
                   <Input
                     placeholder="Enter zip code"
-                    value={bookingState.zipCode}
-                    onChange={(e) =>
-                      handleInputChange("zipCode", e.target.value)
-                    }
+                    value={booking.zipCode}
+                    onChange={(e) => updateBooking("zipCode", e.target.value)}
                   />
                 </div>
 
-                {/* State */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     State *
                   </label>
                   <Select
-                    value={bookingState.state}
-                    onValueChange={(value) => handleInputChange("state", value)}
+                    value={booking.state}
+                    onValueChange={(value) => updateBooking("state", value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select state" />
@@ -487,16 +414,13 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* County */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     County *
                   </label>
                   <Select
-                    value={bookingState.county}
-                    onValueChange={(value) =>
-                      handleInputChange("county", value)
-                    }
+                    value={booking.county}
+                    onValueChange={(value) => updateBooking("county", value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select county" />
@@ -511,38 +435,13 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* <div>
-                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
-                    Phone Number *
-                  </label>
-                  <Input
-                    placeholder="Enter phone number"
-                    value={bookingState.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                  />
-                </div>
-
-                
-                <div>
-                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
-                    Email *
-                  </label>
-                  <Input
-                    placeholder="Enter email address"
-                    value={bookingState.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    type="email"
-                  />
-                </div> */}
-
-                {/* Pets */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Any Pets? *
                   </label>
                   <Select
-                    value={bookingState.pets}
-                    onValueChange={(value) => handleInputChange("pets", value)}
+                    value={booking.pets}
+                    onValueChange={(value) => updateBooking("pets", value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select pet option" />
@@ -557,15 +456,14 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* Reoccurrence */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Reoccurrence
                   </label>
                   <Select
-                    value={bookingState.reoccurrence}
+                    value={booking.reoccurrence}
                     onValueChange={(value) =>
-                      handleInputChange("reoccurrence", value)
+                      updateBooking("reoccurrence", value)
                     }
                   >
                     <SelectTrigger className="w-full">
@@ -581,7 +479,6 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                {/* Date */}
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Date
@@ -593,8 +490,8 @@ const Booking = () => {
                         id="date"
                         className="w-full justify-between font-normal py-5"
                       >
-                        {bookingState.date
-                          ? bookingState.date.toLocaleDateString()
+                        {booking.date
+                          ? booking.date.toLocaleDateString()
                           : "Select date"}
                         <ChevronDownIcon />
                       </Button>
@@ -605,10 +502,13 @@ const Booking = () => {
                     >
                       <Calendar
                         mode="single"
-                        selected={bookingState.date}
+                        selected={booking.date}
                         captionLayout="dropdown"
                         onSelect={(date) => {
-                          handleInputChange("date", date);
+                          updateBooking(
+                            "date",
+                            date ? new Date(date) : undefined
+                          );
                           setOpen(false);
                         }}
                       />
@@ -617,8 +517,7 @@ const Booking = () => {
                 </div>
               </div>
 
-              {/* Service Description */}
-              {bookingState.serviceType && (
+              {booking.serviceType && (
                 <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <p className="text-sm text-blue-800 dark:text-blue-200">
                     {getServiceDescription()}
@@ -626,7 +525,6 @@ const Booking = () => {
                 </div>
               )}
 
-              {/* Add-ons Section */}
               <div className="mt-8">
                 <h2 className="text-lg font-semibold text-[#1F2937] dark:text-gray-100 mb-3">
                   Add-ons ($25 each)
@@ -643,7 +541,7 @@ const Booking = () => {
                     >
                       <Checkbox
                         id={`addon-${idx}`}
-                        checked={bookingState.selectedAddons.includes(addon)}
+                        checked={booking.selectedAddons.includes(addon)}
                         onCheckedChange={(checked) =>
                           handleAddonChange(addon, checked as boolean)
                         }
@@ -661,16 +559,16 @@ const Booking = () => {
             </div>
           </div>
 
-          <div className="rounded-[8px] bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
+          <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
             <h1 className="font-semibold text-xl">
               Special Instructions (Optional)
             </h1>
-            <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-[8px] p-4">
+            <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-4">
               <Textarea
                 placeholder="Any special requests or instructions for our cleaning team..."
-                value={bookingState.specialRequests}
+                value={booking.specialRequests}
                 onChange={(e) =>
-                  handleInputChange("specialRequests", e.target.value)
+                  updateBooking("specialRequests", e.target.value)
                 }
                 rows={4}
               />
@@ -678,21 +576,19 @@ const Booking = () => {
           </div>
 
           {/* Discounts */}
-          <div className="rounded-[8px] bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
+          <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
             <h1 className="font-semibold text-xl">Discount Code</h1>
-            <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-[8px] p-4">
+            <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-4">
               <Input
                 placeholder="Enter discount code"
-                value={bookingState.discountCode}
-                onChange={(e) =>
-                  handleInputChange("discountCode", e.target.value)
-                }
+                value={booking.discountCode}
+                onChange={(e) => updateBooking("discountCode", e.target.value)}
               />
             </div>
           </div>
 
           {/* Disclaimers */}
-          <div className="rounded-[8px] bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 px-6 py-5">
+          <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 px-6 py-5">
             <div className="flex gap-2 items-center">
               <TriangleAlert className="text-amber-800 dark:text-amber-400" />
               <h1 className="font-semibold text-xl text-amber-800 dark:text-amber-300">
@@ -725,23 +621,22 @@ const Booking = () => {
 
         {/* Right Section: Booking Summary */}
         <div className="w-full lg:w-[30%]">
-          <div className="sticky top-6 bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5 rounded-[8px]">
+          <div className="sticky top-6 bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5 rounded-xl">
             <h1 className="font-semibold text-xl mb-4">Booking Summary</h1>
-            <div className="bg-white dark:bg-[#1A1A1A] rounded-[8px] p-4 space-y-4">
+            <div className="bg-white dark:bg-[#1A1A1A] rounded-xl p-4 space-y-4">
               <div>
                 <h3 className="font-medium text-gray-700 dark:text-gray-200">
                   Service
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {SERVICE_TYPES.find(
-                    (s) => s.value === bookingState.serviceType
-                  )?.label || "Not selected"}
+                  {SERVICE_TYPES.find((s) => s.value === booking.serviceType)
+                    ?.label || "Not selected"}
                 </p>
-                {bookingState.cleaningType && (
+                {booking.cleaningType && (
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {
                       CLEANING_TYPES.find(
-                        (c) => c.value === bookingState.cleaningType
+                        (c) => c.value === booking.cleaningType
                       )?.label
                     }
                   </p>
@@ -756,7 +651,7 @@ const Booking = () => {
 
                 {addonsPrice > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span>Add-ons ({bookingState.selectedAddons.length}):</span>
+                    <span>Add-ons ({booking.selectedAddons.length}):</span>
                     <span>${addonsPrice.toFixed(2)}</span>
                   </div>
                 )}
@@ -776,13 +671,13 @@ const Booking = () => {
                 </div>
               </div>
 
-              {bookingState.selectedAddons.length > 0 && (
+              {booking.selectedAddons.length > 0 && (
                 <div>
                   <h4 className="font-medium text-gray-700 dark:text-gray-200 text-sm mb-2">
                     Selected Add-ons:
                   </h4>
                   <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                    {bookingState.selectedAddons.map((addon, index) => (
+                    {booking.selectedAddons.map((addon, index) => (
                       <li key={index}>• {addon}</li>
                     ))}
                   </ul>
@@ -817,13 +712,8 @@ const Booking = () => {
               </label>
               <Input
                 placeholder="Enter your full name"
-                value={paymentDetails.fullName}
-                onChange={(e) =>
-                  setPaymentDetails({
-                    ...paymentDetails,
-                    fullName: e.target.value,
-                  })
-                }
+                value={payment.fullName}
+                onChange={(e) => updatePayment("fullName", e.target.value)}
               />
             </div>
 
@@ -832,13 +722,8 @@ const Booking = () => {
               <Input
                 type="email"
                 placeholder="Enter your email"
-                value={paymentDetails.email}
-                onChange={(e) =>
-                  setPaymentDetails({
-                    ...paymentDetails,
-                    email: e.target.value,
-                  })
-                }
+                value={payment.email}
+                onChange={(e) => updatePayment("email", e.target.value)}
               />
             </div>
 
@@ -849,13 +734,8 @@ const Booking = () => {
               <Input
                 type="tel"
                 placeholder="Enter your phone number"
-                value={paymentDetails.phone}
-                onChange={(e) =>
-                  setPaymentDetails({
-                    ...paymentDetails,
-                    phone: e.target.value,
-                  })
-                }
+                value={payment.phone}
+                onChange={(e) => updatePayment("phone", e.target.value)}
               />
             </div>
           </div>
@@ -863,13 +743,19 @@ const Booking = () => {
           <DialogFooter className="mt-6">
             <Button
               className="w-full"
+              disabled={loading}
               onClick={() => {
-                console.log("Proceeding with:", paymentDetails);
-                router.push("/bookingDetails");
-                setDialogOpen(false);
+                setLoading(true);
+                console.log("Proceeding with:", { booking, payment });
+
+                setTimeout(() => {
+                  setLoading(false);
+                  setDialogOpen(false);
+                  router.push("/bookingDetails");
+                }, 4000);
               }}
             >
-              Proceed
+              {loading ? <Spinner /> : "Proceed"}
             </Button>
           </DialogFooter>
         </DialogContent>
