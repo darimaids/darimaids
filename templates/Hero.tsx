@@ -57,6 +57,14 @@ const Hero = () => {
     setLocalForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const isFormComplete =
+    localForm.serviceType &&
+    localForm.cleaningType &&
+    localForm.address &&
+    localForm.county &&
+    localForm.reoccurrence &&
+    localForm.date;
+
   const handleQuote = () => {
     updateBooking("serviceType", localForm.serviceType);
     updateBooking("cleaningType", localForm.cleaningType);
@@ -271,21 +279,20 @@ const Hero = () => {
           {/* <button className="w-full mt-6 bg-[#6A4AAD] hover:bg-[#5a3b99] text-white font-medium rounded-lg py-3 transition cursor-pointer">
             Get a Quote
           </button> */}
-          <Link href="/booking">
-            <Button
-              className="w-full py-6 mt-6 text-white"
-              onClick={handleQuote}
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="flex items-center gap-2 justify-center">
-                  <Spinner />
-                </span>
-              ) : (
-                "Get a Quote"
-              )}
-            </Button>
-          </Link>
+
+          <Button
+            className="w-full py-6 mt-6 text-white cursor-pointer"
+            onClick={handleQuote}
+            disabled={loading || !isFormComplete}
+          >
+            {loading ? (
+              <span className="flex items-center gap-2 justify-center">
+                <Spinner />
+              </span>
+            ) : (
+              "Get a Quote"
+            )}
+          </Button>
         </div>
 
         <div className="flex flex-col justify-center items-cemter mt-[60px]">

@@ -22,7 +22,6 @@ export interface BookingState {
   totalPrice: number;
 }
 
-// Define the shape of the payment modal state
 export interface PaymentDetails {
   fullName: string;
   email: string;
@@ -33,7 +32,6 @@ interface BookingStore {
   booking: BookingState;
   payment: PaymentDetails;
 
-  // Actions
   updateBooking: <K extends keyof BookingState>(
     key: K,
     value: BookingState[K]
@@ -48,9 +46,6 @@ interface BookingStore {
   resetPayment: () => void;
 }
 
-// -----------------------------
-// ✅ Non-persistent Global Store
-// -----------------------------
 export const useBookingStore = create<BookingStore>((set) => ({
   booking: {
     serviceType: "",
@@ -78,9 +73,6 @@ export const useBookingStore = create<BookingStore>((set) => ({
     phone: "",
   },
 
-  // -----------------------------
-  // Actions
-  // -----------------------------
   updateBooking: (key, value) =>
     set((state) => ({
       booking: { ...state.booking, [key]: value },

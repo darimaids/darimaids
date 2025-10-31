@@ -1,5 +1,8 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+
+// components
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -8,6 +11,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+// icons
 import { CheckCircle } from "lucide-react";
 
 const Body = () => {
@@ -194,9 +198,11 @@ const Body = () => {
             Your first clean is just a click away. Book your trusted cleaning
             service now!
           </p>
-          <Button className="bg-[#EADDCD] text-[#6A4AAD] hover:bg-[#e2d5ff] px-8 py-4 rounded-lg font-semibold sm:py-5 sm:px-[120px] transition-all duration-500">
-            Book your first clean
-          </Button>
+          <Link href="/login">
+            <Button className="bg-[#EADDCD] text-[#6A4AAD] hover:bg-[#e2d5ff] px-8 py-4 rounded-lg font-semibold sm:py-5 sm:px-[120px] transition-all duration-500">
+              Book your first clean
+            </Button>
+          </Link>
           <p className="text-xs mt-1">
             No commitments. Easy booking. Cancel anytime.
           </p>

@@ -60,7 +60,7 @@ const BookingDetailsPage = () => {
     },
     onError: (error: any) => {
       console.error("Booking creation failed:", error);
-      toast.error("Failed to create booking. Please try again.");
+      toast.error(error || "Failed to create booking. Please try again.");
     },
   });
 
