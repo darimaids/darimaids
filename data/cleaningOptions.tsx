@@ -22,7 +22,7 @@ export const REOCCURENCE_OPTIONS = [
   { value: "weekly", label: "Weekly" },
   { value: "bi-weekly", label: "Bi-Weekly" },
   { value: "monthly", label: "Monthly" },
-  { value: "past-cleaning-1-week", label: "Last cleaning: 1 Week Ago" },
-  { value: "past-cleaning-1-month", label: "Last cleaning: 1 Month Ago" },
-  { value: "past-cleaning-3-plus", label: "Last cleaning: 3+ Months Ago" },
+  // { value: "past-cleaning-1-week", label: "Last cleaning: 1 Week Ago" },
+  // { value: "past-cleaning-1-month", label: "Last cleaning: 1 Month Ago" },
+  // { value: "past-cleaning-3-plus", label: "Last cleaning: 3+ Months Ago" },
 ];

@@ -24,6 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // data
 import {
@@ -38,46 +39,20 @@ import { Spinner } from "@/components/ui/spinner";
 
 const Hero = () => {
   const router = useRouter();
-  const { booking, updateBooking } = useBookingStore();
 
-  const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [localForm, setLocalForm] = useState({
-    serviceType: booking.serviceType || "",
-    cleaningType: booking.cleaningType || "",
-    address: booking.address || "",
-    county: booking.county || "",
-    reoccurrence: booking.reoccurrence || "",
-    date: booking.date || undefined,
-  });
-
-  const handleChange = (key: string, value: any) => {
-    setLocalForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const isFormComplete =
-    localForm.serviceType &&
-    localForm.cleaningType &&
-    localForm.address &&
-    localForm.county &&
-    localForm.reoccurrence &&
-    localForm.date;
+  const isFormComplete = phone.trim() !== "" && consent;
 
   const handleQuote = () => {
-    updateBooking("serviceType", localForm.serviceType);
-    updateBooking("cleaningType", localForm.cleaningType);
-    updateBooking("address", localForm.address);
-    updateBooking("county", localForm.county);
-    updateBooking("reoccurrence", localForm.reoccurrence);
-    updateBooking("date", localForm.date);
-
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       router.push("/booking");
-    }, 3500);
+    }, 2000);
   };
   return (
     <section className="relative overflow-hidden pt-20 pb-24 md:pt-16 md:pb-32">
@@ -122,14 +97,14 @@ const Hero = () => {
           seconds.
         </p>
 
-        <div className="mt-10 bg-white dark:bg-[#1E1E1E] border-[0.2px] border-[#C8BCDF] dark:border-gray-800 rounded-xl py-6 sm:p-8 px-4 max-w-[750px] mx-auto">
+        <div className="mt-10 mb-10 bg-white dark:bg-[#1E1E1E] border-[0.2px] border-[#C8BCDF] dark:border-gray-800 rounded-xl py-6 sm:p-8 px-4 max-w-[750px] mx-auto">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 text-start">
               Book Cleaning
             </h3>
             <Link href="/serviceCatalog">
-              <div className="block sm:hidden text-[#6A4AAD] cursor-pointer gap-1">
-                <p>Service catalogue</p>
+              <div className="block sm:hidden text-[#6A4AAD] cursor-pointer gap-1 flex">
+                <p>Service Catalog</p>
                 <ArrowRight />
               </div>
             </Link>
@@ -143,7 +118,7 @@ const Hero = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
-            <div>
+            {/* <div>
               <label
                 htmlFor="serviceType"
                 className="block text-start text-[14px] text-[#666]"
@@ -165,8 +140,9 @@ const Hero = () => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
+            {/* 
             <div>
               <label
                 htmlFor="serviceType"
@@ -189,35 +165,36 @@ const Hero = () => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
+
             <div>
               <label
-                htmlFor="address"
+                htmlFor="Phone Number"
                 className="block text-start text-[14px] text-[#666]"
               >
-                Address
+                Phone Number
               </label>
               <Input
                 className="w-full"
-                placeholder="Enter your address"
-                onChange={(e) => handleChange("address", e.target.value)}
+                placeholder="Enter your Phone number"
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
             <div>
               <label
-                htmlFor="address"
+                htmlFor="email"
                 className="block text-start text-[14px] text-[#666]"
               >
-                County/Province
+                Email Address
               </label>
               <Input
                 className="w-full"
-                placeholder="Enter your county/province"
-                onChange={(e) => handleChange("county", e.target.value)}
+                placeholder="Enter your Email address"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            <div>
+            {/* <div>
               <label
                 htmlFor="serviceType"
                 className="block text-start text-[14px] text-[#666]"
@@ -239,9 +216,9 @@ const Hero = () => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <label
                 htmlFor="serviceType"
                 className="block text-start text-[14px] text-[#666]"
@@ -274,14 +251,11 @@ const Hero = () => {
                   />
                 </PopoverContent>
               </Popover>
-            </div>
+            </div> */}
           </div>
-          {/* <button className="w-full mt-6 bg-[#6A4AAD] hover:bg-[#5a3b99] text-white font-medium rounded-lg py-3 transition cursor-pointer">
-            Get a Quote
-          </button> */}
 
           <Button
-            className="w-full py-6 mt-6 text-white cursor-pointer"
+            className="w-full py-6 mt-6 text-white cursor-pointer disabled:cursor-not-allowed"
             onClick={handleQuote}
             disabled={loading || !isFormComplete}
           >
@@ -293,7 +267,40 @@ const Hero = () => {
               "Get a Quote"
             )}
           </Button>
+
+          <div className="mt-3 flex items-start space-x-2 text-xs text-gray-500 dark:text-gray-400">
+            <Checkbox
+              id="consent"
+              checked={consent}
+              onCheckedChange={(checked) => setConsent(!!checked)}
+              className="mt-0.5 border-gray-400"
+            />
+            <label
+              htmlFor="consent"
+              className="leading-snug cursor-pointer text-[12px] sm:text-xs text-start"
+            >
+              You agree to receive SMS and/or email messages from DariMaids
+              regarding your quote request, service updates, and exclusive
+              offers. You may opt out at any time.{" "}
+              <Link
+                href="/terms-and-privacy"
+                className="text-[#6A4AAD] underline hover:text-[#5a3b99]"
+              >
+                Terms & Privacy Policy
+              </Link>
+              .
+            </label>
+          </div>
         </div>
+
+        {/* <div>
+          <Image
+            src="/klin.svg"
+            alt="Clients and Partner logos"
+            width={1112}
+            height={500}
+          />
+        </div> */}
 
         <div className="flex flex-col justify-center items-cemter mt-[60px]">
           <p className="mb-1 text-gray-500 dark:text-gray-400 text-sm">

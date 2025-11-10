@@ -23,14 +23,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 // data
@@ -40,6 +32,13 @@ import {
   REOCCURENCE_OPTIONS,
 } from "@/data/cleaningOptions";
 import { SERVICES } from "@/data/services";
+import { COUNTIES } from "@/data/counties";
+import { STATES } from "@/data/states";
+import {
+  ADD_ONS,
+  LAST_CLEANING_OPTIONS,
+  PET_OPTIONS,
+} from "@/data/homeoptions";
 
 // icons
 import { ChevronDownIcon, TriangleAlert } from "lucide-react";
@@ -50,7 +49,6 @@ import { useBookingStore } from "@/store/useBookingStore";
 const Booking = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const booking = useBookingStore((state) => state.booking);
@@ -62,30 +60,6 @@ const Booking = () => {
   const [basePrice, setBasePrice] = useState(0);
   const [addonsPrice, setAddonsPrice] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
-
-  const COUNTIES = ["Palm Beach", "Broward", "Miami-Dade"];
-  const STATES = ["Florida", "North Carolina", "Alaska", "New York", "New Hampshire"];
-  const LAST_CLEANING_OPTIONS = [
-    { value: "1-week", label: "1 Week Ago" },
-    { value: "1-month", label: "1 Month Ago" },
-    { value: "3-plus-months", label: "3+ Months Ago" },
-  ];
-  const PET_OPTIONS = [
-    { value: "none", label: "No Pets" },
-    { value: "small", label: "Small Pets" },
-    { value: "large", label: "Large Pets" },
-  ];
-  const ADD_ONS = [
-    "Appliance Cleaning",
-    "Cabinet Cleaning",
-    "Grout Scrubbing",
-    "Window Cleaning",
-    "Linen Service",
-    "Laundry",
-    "Balcony/Patio",
-    "Toaster/Oven",
-    "Inside Fridge",
-  ];
 
   //* recalculate pricing whenever relevant booking data changes
   useEffect(() => {
@@ -191,7 +165,6 @@ const Booking = () => {
     setBasePrice(base);
     setAddonsPrice(addons);
     setDiscountAmount(discount);
-    // setTotalPrice(base + addons - discount);
     const total = base + addons - discount;
     setTotalPrice(total);
     updateBooking("totalPrice", total);
@@ -213,6 +186,35 @@ const Booking = () => {
     );
     return service?.description || "";
   };
+
+  const handleSubmit = () => {
+    setLoading(true);
+    console.log("Submitting booking:", { booking, payment });
+
+    setTimeout(() => {
+      setLoading(false);
+      router.push("/bookingDetails");
+    }, 4000);
+  };
+
+  const isFormComplete =
+    booking.serviceType &&
+    booking.cleaningType &&
+    booking.squareFootage &&
+    booking.bedrooms &&
+    booking.bathrooms &&
+    booking.lastCleaning &&
+    booking.address &&
+    booking.city &&
+    booking.zipCode &&
+    booking.state &&
+    booking.county &&
+    booking.pets &&
+    payment.firstName &&
+    payment.lastName &&
+    payment.email &&
+    payment.phone;
+
   return (
     <div className="py-12 px-4 sm:px-8 md:px-12 lg:px-[286px] bg-white dark:bg-[#0D0D0D] text-[#1F2937] dark:text-gray-100 transition-colors duration-300">
       <div className="flex justify-center items-center mb-8">
@@ -233,8 +235,66 @@ const Booking = () => {
       </div>
       <div className="flex flex-col lg:flex-row justify-between gap-8">
         <div className="w-full lg:w-[70%] space-y-5">
+          {/* Contact Information Section - ADDED THIS */}
           <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
-            <h1 className="font-semibold text-xl">Booking</h1>
+            <h1 className="font-semibold text-xl">Contact Information</h1>
+            <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    First Name *
+                  </label>
+                  <Input
+                    placeholder="Enter your first name"
+                    value={payment.firstName}
+                    onChange={(e) => updatePayment("firstName", e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    Last Name *
+                  </label>
+                  <Input
+                    placeholder="Enter your last name"
+                    value={payment.lastName}
+                    onChange={(e) => updatePayment("lastName", e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    Email *
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={payment.email}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      updatePayment("email", value);
+                      localStorage.setItem("userEmail", value);
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    Phone Number *
+                  </label>
+                  <Input
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={payment.phone}
+                    onChange={(e) => updatePayment("phone", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
+            <h1 className="font-semibold text-xl">About your home</h1>
             <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -515,15 +575,29 @@ const Booking = () => {
                     </PopoverContent>
                   </Popover>
                 </div>
+
+                <div>
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    Time
+                  </label>
+                  <Input
+                    type="time"
+                    id="time-picker"
+                    step="1"
+                    defaultValue="00:00:00"
+                    value={booking.time}
+                    onChange={(e) => updateBooking("time", e.target.value)}
+                  />
+                </div>
               </div>
 
-              {booking.serviceType && (
+              {/* {booking.serviceType && (
                 <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <p className="text-sm text-blue-800 dark:text-blue-200">
                     {getServiceDescription()}
                   </p>
                 </div>
-              )}
+              )} */}
 
               <div className="mt-8">
                 <h2 className="text-lg font-semibold text-[#1F2937] dark:text-gray-100 mb-3">
@@ -572,49 +646,6 @@ const Booking = () => {
                 }
                 rows={4}
               />
-            </div>
-          </div>
-
-          {/* Discounts */}
-          <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
-            <h1 className="font-semibold text-xl">Discount Code</h1>
-            <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-4">
-              <Input
-                placeholder="Enter discount code"
-                value={booking.discountCode}
-                onChange={(e) => updateBooking("discountCode", e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* Disclaimers */}
-          <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 px-6 py-5">
-            <div className="flex gap-2 items-center">
-              <TriangleAlert className="text-amber-800 dark:text-amber-400" />
-              <h1 className="font-semibold text-xl text-amber-800 dark:text-amber-300">
-                Important Information
-              </h1>
-            </div>
-            <div className="mt-4 space-y-3 text-sm text-amber-700 dark:text-amber-300">
-              <p>
-                <strong>Pricing Notice:</strong> All prices shown are estimates.
-              </p>
-              <p>
-                <strong>Square Footage:</strong> Homes larger than 1500 sq ft
-                may have adjusted rates.
-              </p>
-              <p>
-                <strong>Final Pricing:</strong> Confirmed after brief on-site
-                assessment.
-              </p>
-              <p>
-                <strong>Deposit:</strong> A deposit may be required to confirm
-                booking.
-              </p>
-              <p>
-                <strong>Travel Fees:</strong> May apply outside our service
-                area.
-              </p>
             </div>
           </div>
         </div>
@@ -684,86 +715,39 @@ const Booking = () => {
                 </div>
               )}
 
+              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  {/* {getServiceDescription()} */}
+                  Prices shown are estimates. Final cost may vary based on the
+                  home’s size, condition, or additional services requested
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2 mt-2">
+                <Checkbox
+                  id="proceedWithoutCard"
+                  // checked={proceedWithoutCard}
+                  // onCheckedChange={(checked) => setProceedWithoutCard(checked)}
+                />
+                <label
+                  htmlFor="proceedWithoutCard"
+                  className="text-sm text-gray-700 dark:text-gray-200"
+                >
+                  Proceed without credit card information
+                </label>
+              </div>
+
               <Button
                 className="w-full text-white"
-                onClick={() => setDialogOpen(true)}
+                onClick={handleSubmit}
+                disabled={loading || !isFormComplete}
               >
-                Continue to Payment
+                {loading ? <Spinner /> : "Schedule Booking"}
               </Button>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Payment Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] dark:bg-[#121212] dark:text-gray-100">
-          <DialogHeader>
-            <DialogTitle>You’re almost there!</DialogTitle>
-            <DialogDescription>
-              We just need a few details to process booking
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 mt-4">
-            <div>
-              <label className="text-sm font-medium block mb-1">
-                Full Name
-              </label>
-              <Input
-                placeholder="Enter your full name"
-                value={payment.fullName}
-                onChange={(e) => updatePayment("fullName", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium block mb-1">Email</label>
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={payment.email}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  updatePayment("email", value);
-                  localStorage.setItem("userEmail", value);
-                }}
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium block mb-1">
-                Phone Number
-              </label>
-              <Input
-                type="tel"
-                placeholder="Enter your phone number"
-                value={payment.phone}
-                onChange={(e) => updatePayment("phone", e.target.value)}
-              />
-            </div>
-          </div>
-
-          <DialogFooter className="mt-6">
-            <Button
-              className="w-full"
-              disabled={loading}
-              onClick={() => {
-                setLoading(true);
-                console.log("Proceeding with:", { booking, payment });
-
-                setTimeout(() => {
-                  setLoading(false);
-                  setDialogOpen(false);
-                  router.push("/bookingDetails");
-                }, 4000);
-              }}
-            >
-              {loading ? <Spinner /> : "Proceed"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

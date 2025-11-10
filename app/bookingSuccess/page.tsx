@@ -1,10 +1,46 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Share2 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const page = () => {
+const BookingSuccessPage = () => {
+  const searchParams = useSearchParams();
+  const [bookingData, setBookingData] = useState<any>(null);
+
+  useEffect(() => {
+    const dataParam = searchParams.get("data");
+    if (dataParam) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(dataParam));
+        setBookingData(parsed);
+      } catch (err) {
+        console.error("Failed to parse booking data:", err);
+      }
+    }
+  }, [searchParams]);
+
+  // Show skeleton loading if data not yet available
+  if (!bookingData) {
+    return (
+      <div className="py-12 px-4 sm:px-8 md:px-16 lg:px-[286px]">
+        <Skeleton className="h-10 w-[400px] mx-auto mb-8" />
+        <Skeleton className="h-8 w-[227px] mx-auto mb-10 rounded-full" />
+        <div className="space-y-4 max-w-[631px] mx-auto">
+          {Array.from({ length: 8 }).map((_, idx) => (
+            <Skeleton key={idx} className="h-6 w-full rounded-lg" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const { booking, user } = bookingData;
+
   return (
     <div className="py-12 px-4 sm:px-8 md:px-16 lg:px-[286px] bg-white dark:bg-[#0D0D0D] text-[#1F2937] dark:text-gray-100 transition-colors duration-300">
       <div className="flex justify-center items-center mb-8">
@@ -23,6 +59,7 @@ const page = () => {
           />
         </div>
       </div>
+
       <div className="text-center">
         <h1 className="font-bold text-2xl mb-2">Payment Successful</h1>
         <p className="mb-6 text-[#666] dark:text-gray-400">
@@ -30,80 +67,45 @@ const page = () => {
           sparkle!
         </p>
         <div className="flex justify-center items-center mb-10">
-          <div className="bg-[#EFEDF7] w-[227px] h-[38px] py-2.5 rounded-full text-[#6A4AAD]">
+          <div className="bg-[#EFEDF7] dark:bg-[#3C3C3C] w-auto px-4 h-[38px] py-1.5 rounded-full text-[#6A4AAD] dark:text-[#F2A358]">
             <p className="font-bold mb-6">
-              Booking ID: <span className="font-bold">#DM-4892-175</span>
+              Booking ID:{" "}
+              <span className="font-bold uppercase">
+                {booking.bookingReference}
+              </span>
             </p>
           </div>
         </div>
       </div>
 
       <div className="flex justify-center items-center">
-        <div className="rounded-[8px] bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5 w-[631px]">
-          <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-[8px] p-6">
+        <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5 w-[631px]">
+          <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-6">
             <div className="space-y-4 mb-6">
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Service
-                </span>
-                <span className="font-medium text-right">
-                  Deep clean/Move in
-                </span>
-              </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Date</span>
-                <span className="font-medium">25th October 2025</span>
-              </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Time</span>
-                <span className="font-medium">4PM - 5PM</span>
-              </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Frequency
-                </span>
-                <span className="font-medium text-right">
-                  One-time re-occurence (No discount)
-                </span>
-              </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Cleaners
-                </span>
-                <span className="font-medium">2 Cleaners</span>
-              </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Duration
-                </span>
-                <span className="font-medium">3 Hours</span>
-              </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Add-ons
-                </span>
-                <span className="font-medium text-right max-w-[200px]">
-                  Inside fridge, Oven interior, Wall washing, Laundry
-                </span>
-              </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+              <InfoRow label="Name" value={user.fullName} />
+              <InfoRow label="Service" value={booking.serviceType} />
+              <InfoRow
+                label="Date"
+                value={new Date(booking.date).toLocaleDateString()}
+              />
+              <InfoRow label="Time" value={booking.time} />
+              <InfoRow label="Frequency" value={booking.frequency} />
+              <InfoRow
+                label="Cleaners"
+                value={`${booking.cleaners} Cleaners`}
+              />
+              <InfoRow label="Duration" value={booking.duration} />
+              <InfoRow label="Charge" value={`$${booking.charge || "None"}`} />
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">
                   Cleaner
                 </span>
-                <Link href="/">
+                <Link href="/bookings">
                   <span className="font-medium text-blue-600 dark:text-blue-400 cursor-pointer">
                     Go to My Bookings
                   </span>
                 </Link>
               </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
             </div>
           </div>
         </div>
@@ -117,7 +119,7 @@ const page = () => {
           </Button>
           <Button
             variant={"outline"}
-            className="w-[50%] text-[#6A4AAD] dark:text-[#6A4AAD] font-medium py-5 rounded-[8px] cursor-pointer border border-[#6A4AAD]"
+            className="w-[50%] text-[#6A4AAD] dark:text-[#6A4AAD] font-medium py-5 rounded-lg cursor-pointer border border-[#6A4AAD]"
           >
             <Share2 />
             Share Booking
@@ -125,12 +127,13 @@ const page = () => {
         </div>
       </div>
 
+      {/* Updated light/dark yellow section */}
       <div className="flex justify-center mt-5">
-        <div className="w-[632px] bg-[#FEF6EE] rounded-[8px] px-4 py-6">
-          <h3 className="font-semibold text-lg mb-4 text-[#F2A358]">
+        <div className="w-[632px] rounded-xl px-4 py-6 bg-[#FEF6EE] dark:bg-[#594713]">
+          <h3 className="font-semibold text-lg mb-4 text-[#F2A358] dark:text-[#FFD580]">
             What happens next?
           </h3>
-          <ul className="space-y-2 dark: text-black">
+          <ul className="space-y-2 text-black dark:text-gray-200">
             <li>
               • You'll receive a confirmation email with all booking details
             </li>
@@ -149,4 +152,17 @@ const page = () => {
   );
 };
 
-export default page;
+interface InfoRowProps {
+  label: string;
+  value: string | number;
+}
+
+const InfoRow = ({ label, value }: InfoRowProps) => (
+  <div className="flex justify-between">
+    <span className="text-gray-600 dark:text-gray-400">{label}</span>
+    <span className="font-medium text-right capitalize">{value}</span>
+  </div>
+  // <div className="border-t border-gray-200 dark:border-gray-700 my-2" />;
+);
+
+export default BookingSuccessPage;

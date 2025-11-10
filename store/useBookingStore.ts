@@ -19,11 +19,14 @@ export interface BookingState {
   specialRequests: string;
   selectedAddons: string[];
   discountCode: string;
+  time: string;
+  duration: string;
   totalPrice: number;
 }
 
 export interface PaymentDetails {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
 }
@@ -65,10 +68,13 @@ export const useBookingStore = create<BookingStore>((set) => ({
     specialRequests: "",
     selectedAddons: [],
     discountCode: "",
+    time: "",
+    duration: "Approx. 3hrs",
     totalPrice: 0,
   },
   payment: {
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
   },
@@ -113,6 +119,8 @@ export const useBookingStore = create<BookingStore>((set) => ({
         specialRequests: "",
         selectedAddons: [],
         discountCode: "",
+        time: "",
+        duration: "",
         totalPrice: 0,
       },
     }),
@@ -120,7 +128,8 @@ export const useBookingStore = create<BookingStore>((set) => ({
   resetPayment: () =>
     set({
       payment: {
-        fullName: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
       },

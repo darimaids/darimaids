@@ -18,103 +18,6 @@ const Body = () => {
   return (
     <div className="bg-[#FAFAFA] dark:bg-[#0F0F0F] transition-colors duration-300 text-[#1F2937] dark:text-gray-200">
       <section className="py-20 px-6 sm:px-[286px]">
-        <h2 className="text-3xl font-bold mb-2 text-center">How It Works</h2>
-        <p className="text-gray-600 dark:text-gray-400 text-lg mb-14 text-center">
-          Three easy steps from booking to bliss. No surprises, just results.
-        </p>
-
-        <div className="space-y-24">
-          {/* Step 1 */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-10">
-            <div className="max-w-[439px] text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-2">
-                Tell Us a Bit About You
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Sign up in just 30 seconds with your email or social login. This
-                helps us save your details for faster booking next time and lets
-                you track all your cleanings in one place.
-              </p>
-            </div>
-            <div className="relative w-full sm:max-w-md mx-auto lg:mx-0">
-              <Image
-                src="/first-light.svg"
-                alt="Create Account Form (light)"
-                width={400}
-                height={300}
-                className="w-full h-auto dark:hidden"
-              />
-              <Image
-                src="/first-dark.svg"
-                alt="Create Account Form (dark)"
-                width={400}
-                height={300}
-                className="w-full h-auto hidden dark:block"
-              />
-            </div>
-          </div>
-
-          {/* Step 2 */}
-          <div className="flex flex-col md:flex-row-reverse justify-between items-center gap-10">
-            <div className="max-w-[439px] text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-2">Book Your Cleaning</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Select your service, frequency, and address. See your final,
-                all-inclusive price before you book. No hidden fees, no
-                surprises — just transparent pricing and full control.
-              </p>
-            </div>
-            <div className="relative w-full sm:max-w-md mx-auto lg:mx-0">
-              <Image
-                src="/second-light.svg"
-                alt="Booking Form (light)"
-                width={400}
-                height={300}
-                className="w-full h-auto dark:hidden"
-              />
-              <Image
-                src="/second-dark.svg"
-                alt="Booking Form (dark)"
-                width={400}
-                height={300}
-                className="w-full h-auto hidden dark:block"
-              />
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-10">
-            <div className="max-w-[439px] text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-2">
-                Confirm, Pay & Relax
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Pay using secure payment channels — your details are safely
-                encrypted and charged only after the job is complete. Sit back
-                and relax while we handle the rest.
-              </p>
-            </div>
-            <div className="relative w-full sm:max-w-md mx-auto lg:mx-0">
-              <Image
-                src="/third-light.svg"
-                alt="Booking Confirmation (light)"
-                width={400}
-                height={300}
-                className="w-full h-auto dark:hidden"
-              />
-              <Image
-                src="/third-dark.svg"
-                alt="Booking Confirmation (dark)"
-                width={400}
-                height={300}
-                className="w-full h-auto hidden dark:block"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 px-6 sm:px-[286px]">
         <div>
           <h2 className="text-3xl font-bold mb-2 text-center">
             Why Choose Darimaids?
@@ -182,6 +85,103 @@ const Body = () => {
         </div>
       </section>
 
+      <section className="py-20 px-6 sm:px-[286px]">
+        <h2 className="text-3xl font-bold mb-2 text-center">How It Works</h2>
+        <p className="text-gray-600 dark:text-gray-400 text-lg mb-14 text-center">
+          Three easy steps from booking to bliss. No surprises, just results.
+        </p>
+
+        <div className="space-y-24">
+          {/* Step 1 */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-10">
+            <div className="max-w-[439px] text-center md:text-left">
+              <h3 className="text-xl font-semibold mb-2">
+                Tell Us a Bit About You
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Sign up in just 30 seconds with your email or social login. This
+                helps us save your details for faster booking next time and lets
+                you track all your cleanings in one place.
+              </p>
+            </div>
+            <div className="relative w-full sm:max-w-md mx-auto lg:mx-0">
+              <Image
+                src="/first-light.svg"
+                alt="Create Account Form (light)"
+                width={400}
+                height={300}
+                className="w-full h-auto dark:hidden"
+              />
+              <Image
+                src="/first-dark.svg"
+                alt="Create Account Form (dark)"
+                width={400}
+                height={300}
+                className="w-full h-auto hidden dark:block"
+              />
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="flex flex-col md:flex-row-reverse justify-between items-center gap-10">
+            <div className="max-w-[439px] text-center md:text-left">
+              <h3 className="text-xl font-semibold mb-2">Schedule Cleaning</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Select your service, frequency, and address. See your final,
+                all-inclusive price before you book. No hidden fees, no
+                surprises — just transparent pricing and full control.
+              </p>
+            </div>
+            <div className="relative w-full sm:max-w-md mx-auto lg:mx-0">
+              <Image
+                src="/second-light.svg"
+                alt="Booking Form (light)"
+                width={400}
+                height={300}
+                className="w-full h-auto dark:hidden"
+              />
+              <Image
+                src="/second-dark.svg"
+                alt="Booking Form (dark)"
+                width={400}
+                height={300}
+                className="w-full h-auto hidden dark:block"
+              />
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-10">
+            <div className="max-w-[439px] text-center md:text-left">
+              <h3 className="text-xl font-semibold mb-2">
+                Confirm booking & Relax
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Pay using secure payment channels — your details are safely
+                encrypted and charged only after the job is complete. Sit back
+                and relax while we handle the rest.
+              </p>
+            </div>
+            <div className="relative w-full sm:max-w-md mx-auto lg:mx-0">
+              <Image
+                src="/third-light.svg"
+                alt="Booking Confirmation (light)"
+                width={400}
+                height={300}
+                className="w-full h-auto dark:hidden"
+              />
+              <Image
+                src="/third-dark.svg"
+                alt="Booking Confirmation (dark)"
+                width={400}
+                height={300}
+                className="w-full h-auto hidden dark:block"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-[#6A4AAD] py-20 text-center px-6 relative overflow-hidden h-[450px] flex flex-col justify-center items-center text-[#EADDCD]">
         <div className="absolute left-0 md:left-0 top-1/2 transform -translate-y-1/2 opacity-20">
           <img src="/half-logo-left.svg" alt="Darimaids Logo" />
@@ -192,7 +192,7 @@ const Body = () => {
 
         <div className="max-w-3xl mx-auto relative z-10">
           <h2 className="text-3xl font-bold mb-1">
-            Ready to reclaim your time?
+            Cancel anytime by 24hr cancellation
           </h2>
           <p className=" mb-8">
             Your first clean is just a click away. Book your trusted cleaning

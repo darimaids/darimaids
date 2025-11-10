@@ -36,6 +36,7 @@ const BookingsPage = () => {
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("userEmail");
+    console.log("savedEmail: ", savedEmail);
     setEmail(savedEmail);
   }, []);
 
