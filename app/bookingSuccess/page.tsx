@@ -1,14 +1,29 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 
 const BookingSuccessPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div>
+          <Spinner />
+        </div>
+      }
+    >
+      <BookingSuccessContent />
+    </Suspense>
+  );
+};
+
+const BookingSuccessContent = () => {
   const searchParams = useSearchParams();
   const [bookingData, setBookingData] = useState<any>(null);
 
@@ -23,8 +38,7 @@ const BookingSuccessPage = () => {
       }
     }
   }, [searchParams]);
-
-  // Show skeleton loading if data not yet available
+  
   if (!bookingData) {
     return (
       <div className="py-12 px-4 sm:px-8 md:px-16 lg:px-[286px]">
