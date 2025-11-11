@@ -1,10 +1,11 @@
 import { publicApi } from "..";
 import { extractErrorMessage } from "@/utils/errorHandler";
 
-export const getBookings = async (data: any) => {
+export const getBookings = async (email: string) => {
   try {
-    const response = await publicApi.get("/api/v1/booking/getBookings", data);
-    // console.log("API response:", response.data);
+    const response = await publicApi.get(
+      `/api/v1/booking/getBookings?email=${email}`
+    );
     return response?.data;
   } catch (error) {
     console.log("Error fetching bookings:", error);
@@ -12,42 +13,38 @@ export const getBookings = async (data: any) => {
   }
 };
 
-export const getPendingBookings = async (data: any) => {
+export const getPendingBookings = async (email: string) => {
   try {
     const response = await publicApi.get(
-      "/api/v1/booking/getAllpendingBookings",
-      data
+      `/api/v1/booking/getAllpendingBookings?email=${email}`
     );
-    // console.log("API response:", response.data);
     return response?.data;
   } catch (error) {
-    console.log("Error fetching bookings:", error);
+    console.log("Error fetching pending bookings:", error);
     throw new Error(extractErrorMessage(error));
   }
 };
 
-export const getBookingInfo = async (uid: any) => {
+export const getBookingInfo = async (uid: string) => {
   try {
     const response = await publicApi.get(
-      `api/v1/booking/getBooking?bookingId=${uid}`
+      `/api/v1/booking/getBooking?bookingId=${uid}`
     );
-    // console.log("API response:", response.data);
     return response?.data;
   } catch (error) {
-    console.log("Error fetching bookings:", error);
+    console.log("Error fetching booking info:", error);
     throw new Error(extractErrorMessage(error));
   }
 };
 
-export const getPendingBookingInfo = async (uid: any) => {
+export const getPendingBookingInfo = async (uid: string) => {
   try {
     const response = await publicApi.get(
-      `api/v1/booking/getPendingBooking?bookingId${uid}`
+      `/api/v1/booking/getPendingBooking?bookingId=${uid}`
     );
-    // console.log("API response:", response.data);
     return response?.data;
   } catch (error) {
-    console.log("Error fetching bookings:", error);
+    console.log("Error fetching pending booking info:", error);
     throw new Error(extractErrorMessage(error));
   }
 };
@@ -58,7 +55,6 @@ export const createBooking = async (data: any) => {
       "/api/v1/booking/createBookingPayment",
       data
     );
-    // console.log("API response:", response.data);
     return response?.data;
   } catch (error) {
     console.log("Error creating booking:", error);
@@ -66,15 +62,14 @@ export const createBooking = async (data: any) => {
   }
 };
 
-export const deleteBooking = async (uid: any) => {
+export const deleteBooking = async (uid: string) => {
   try {
-    const response = await publicApi.get(
+    const response = await publicApi.delete(
       `/api/v1/booking/delete?bookingId=${uid}`
     );
-    // console.log("API response:", response.data);
     return response?.data;
   } catch (error) {
-    console.log("Error fetching bookings:", error);
+    console.log("Error deleting booking:", error);
     throw new Error(extractErrorMessage(error));
   }
 };
