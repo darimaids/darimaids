@@ -27,19 +27,26 @@ const LoginPage = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: login,
     onSuccess: (res: any) => {
-      if (res?.success && res?.data?.token) {
+      if (res?.success && res?.data?.token && res?.data?.user) {
         const { token, user } = res.data;
         sessionStorage.setItem("accessToken", token);
         setCustomerData(token, user);
         toast.success("Login Successful!");
-        router.push("/");
+
+        if (user.role === "worker") {
+          router.push("/workerportal");
+        } else if (user.role === "customer") {
+          router.push("/");
+        } else {
+          router.push("/");
+        }
       } else {
         toast.error("Login failed. Please try again.");
       }
     },
     onError: (error: any) => {
       console.error("Login Error:", error);
-      toast.error("Invalid credential");
+      toast.error("Invalid credentials");
     },
   });
 

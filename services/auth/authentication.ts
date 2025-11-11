@@ -1,4 +1,4 @@
-import { publicApi } from "..";
+import { privateApi, publicApi } from "..";
 import { extractErrorMessage } from "@/utils/errorHandler";
 
 export const login = async (data: any) => {
@@ -84,6 +84,18 @@ export const changePassword = async (data: any) => {
       "/api/v1/booking/createBookingPayment",
       data
     );
+    // console.log("API response:", response.data);
+    return response?.data;
+  } catch (error) {
+    console.log("Error creating booking:", error);
+    throw extractErrorMessage(error);
+  }
+};
+
+
+export const viewProfile = async () => {
+  try {
+    const response = await privateApi.get("/api/v1/user/view-profile");
     // console.log("API response:", response.data);
     return response?.data;
   } catch (error) {
