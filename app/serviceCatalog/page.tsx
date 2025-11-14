@@ -1,9 +1,13 @@
+"use client";
+
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SERVICES } from "@/data/services";
 
 const ServicesPage = () => {
+  const router = useRouter();
   return (
     <div className="bg-[#FAFAFA] dark:bg-[#0F0F0F] transition-colors duration-300">
       {/* Header */}
@@ -61,7 +65,10 @@ const ServicesPage = () => {
                 </div>
               </div>
 
-              <Button className="w-full py-4 mt-auto bg-[#6A4AAD] hover:bg-[#5a3b99] dark:bg-[#7C5DC5] dark:hover:bg-[#6F4FB7] text-white transition">
+              <Button
+                onClick={() => router.push("/booking")}
+                className="w-full py-4 mt-auto bg-[#6A4AAD] hover:bg-[#5a3b99] dark:bg-[#7C5DC5] dark:hover:bg-[#6F4FB7] text-white transition"
+              >
                 Get a Quote
               </Button>
             </div>

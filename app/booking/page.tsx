@@ -61,6 +61,38 @@ const Booking = () => {
   const [addonsPrice, setAddonsPrice] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
 
+  // Helper function to extract bedrooms and bathrooms from cleaning type
+  const getBedroomsBathroomsFromCleaningType = (cleaningType: string) => {
+    switch (cleaningType) {
+      case "studio":
+        return { bedrooms: "0", bathrooms: "1" };
+      case "2-bed-1-bath":
+        return { bedrooms: "2", bathrooms: "1" };
+      case "2-bed-2-bath":
+        return { bedrooms: "2", bathrooms: "2" };
+      case "3-bed-2-bath":
+        return { bedrooms: "3", bathrooms: "2" };
+      case "1500-sqft-plus":
+        return {
+          bedrooms: booking.bedrooms || "3",
+          bathrooms: booking.bathrooms || "2",
+        };
+      default:
+        return { bedrooms: "1", bathrooms: "1" };
+    }
+  };
+
+  // Update bedrooms and bathrooms when cleaning type changes
+  useEffect(() => {
+    if (booking.cleaningType) {
+      const { bedrooms, bathrooms } = getBedroomsBathroomsFromCleaningType(
+        booking.cleaningType
+      );
+      updateBooking("bedrooms", bedrooms);
+      updateBooking("bathrooms", bathrooms);
+    }
+  }, [booking.cleaningType]);
+
   //* recalculate pricing whenever relevant booking data changes
   useEffect(() => {
     calculatePricing();
@@ -201,8 +233,6 @@ const Booking = () => {
     booking.serviceType &&
     booking.cleaningType &&
     booking.squareFootage &&
-    booking.bedrooms &&
-    booking.bathrooms &&
     booking.lastCleaning &&
     booking.address &&
     booking.city &&
@@ -235,7 +265,7 @@ const Booking = () => {
       </div>
       <div className="flex flex-col lg:flex-row justify-between gap-8">
         <div className="w-full lg:w-[70%] space-y-5">
-          {/* Contact Information Section - ADDED THIS */}
+          {/* Contact Information Section */}
           <div className="rounded-xl bg-[#F9FAFB] dark:bg-[#121212] px-6 py-5">
             <h1 className="font-semibold text-xl">Contact Information</h1>
             <div className="mt-4 bg-white dark:bg-[#1A1A1A] rounded-xl p-5">
@@ -355,46 +385,6 @@ const Booking = () => {
                     }
                     type="number"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
-                    Number of Bedrooms *
-                  </label>
-                  <Select
-                    value={booking.bedrooms}
-                    onValueChange={(value) => updateBooking("bedrooms", value)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select bedrooms" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1</SelectItem>
-                      <SelectItem value="2">2</SelectItem>
-                      <SelectItem value="3">3</SelectItem>
-                      <SelectItem value="4">4+</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
-                    Number of Bathrooms *
-                  </label>
-                  <Select
-                    value={booking.bathrooms}
-                    onValueChange={(value) => updateBooking("bathrooms", value)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select bathrooms" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1</SelectItem>
-                      <SelectItem value="2">2</SelectItem>
-                      <SelectItem value="3">3</SelectItem>
-                      <SelectItem value="4">4+</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 <div>
@@ -591,14 +581,6 @@ const Booking = () => {
                 </div>
               </div>
 
-              {/* {booking.serviceType && (
-                <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <p className="text-sm text-blue-800 dark:text-blue-200">
-                    {getServiceDescription()}
-                  </p>
-                </div>
-              )} */}
-
               <div className="mt-8">
                 <h2 className="text-lg font-semibold text-[#1F2937] dark:text-gray-100 mb-3">
                   Add-ons ($25 each)
@@ -717,18 +699,13 @@ const Booking = () => {
 
               <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <p className="text-sm text-blue-800 dark:text-blue-200">
-                  {/* {getServiceDescription()} */}
                   Prices shown are estimates. Final cost may vary based on the
-                  home’s size, condition, or additional services requested
+                  home's size, condition, or additional services requested
                 </p>
               </div>
 
               <div className="flex items-center space-x-2 mt-2">
-                <Checkbox
-                  id="proceedWithoutCard"
-                  // checked={proceedWithoutCard}
-                  // onCheckedChange={(checked) => setProceedWithoutCard(checked)}
-                />
+                <Checkbox id="proceedWithoutCard" />
                 <label
                   htmlFor="proceedWithoutCard"
                   className="text-sm text-gray-700 dark:text-gray-200"

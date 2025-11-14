@@ -125,7 +125,7 @@ const BookingSuccessContent = () => {
         </div>
       </div>
 
-      <div className="flex justify-center mt-5">
+      {/* <div className="flex justify-center mt-5">
         <div className="w-[631px] flex gap-2 items-center">
           <Button className="w-[50%] dark:text-white font-medium py-5">
             <CalendarDays />
@@ -139,10 +139,9 @@ const BookingSuccessContent = () => {
             Share Booking
           </Button>
         </div>
-      </div>
+      </div> */}
 
-      {/* Updated light/dark yellow section */}
-      <div className="flex justify-center mt-5">
+      {/* <div className="flex justify-center mt-5">
         <div className="w-[632px] rounded-xl px-4 py-6 bg-[#FEF6EE] dark:bg-[#594713]">
           <h3 className="font-semibold text-lg mb-4 text-[#F2A358] dark:text-[#FFD580]">
             What happens next?
@@ -161,7 +160,7 @@ const BookingSuccessContent = () => {
             <li>• After service, you will receive a satisfaction survey</li>
           </ul>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

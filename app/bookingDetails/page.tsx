@@ -167,7 +167,7 @@ const BookingDetailsPage = () => {
                   }
                 />
                 <Divider />
-                <InfoRow
+                {/* <InfoRow
                   label="Bedrooms"
                   value={booking.bedrooms ? `${booking.bedrooms}` : "N/A"}
                 />
@@ -176,7 +176,7 @@ const BookingDetailsPage = () => {
                   label="Bathrooms"
                   value={booking.bathrooms ? `${booking.bathrooms}` : "N/A"}
                 />
-                <Divider />
+                <Divider /> */}
                 <InfoRow
                   label="Date"
                   value={
