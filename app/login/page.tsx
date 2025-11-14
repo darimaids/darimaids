@@ -17,12 +17,15 @@ import { useCustomerStore } from "@/store/useCustomerStore";
 // api
 import { login } from "@/services/auth/authentication";
 
+// icons
+import { EyeOff, Eye } from "lucide-react";
+
 const LoginPage = () => {
   const router = useRouter();
   const { setCustomerData } = useCustomerStore();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,
@@ -96,13 +99,24 @@ const LoginPage = () => {
             <label className="block text-sm text-[#666] dark:text-gray-300 mb-1">
               Password
             </label>
-            <Input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full"
-            />
+
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="pr-10"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-300"
+              >
+                {showPassword ? <EyeOff /> : <Eye />}
+              </button>
+            </div>
           </div>
 
           <Button

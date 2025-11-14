@@ -26,6 +26,17 @@ export const createCustomer = async (data: any) => {
   }
 };
 
+export const createWorker = async (data: any) => {
+  try {
+    const response = await publicApi.post("/api/v1/user/register-worker", data);
+    // console.log("API response:", response.data);
+    return response?.data;
+  } catch (error) {
+    console.log("Error creating worker:", error);
+    throw extractErrorMessage(error);
+  }
+};
+
 export const createCleaner = async (data: any) => {
   try {
     const response = await publicApi.post("/api/v1/user/register-worker", data);
@@ -91,7 +102,6 @@ export const changePassword = async (data: any) => {
     throw extractErrorMessage(error);
   }
 };
-
 
 export const viewProfile = async () => {
   try {

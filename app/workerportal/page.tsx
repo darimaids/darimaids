@@ -48,15 +48,17 @@ import {
 import { viewProfile } from "@/services/auth/authentication";
 import {
   getAllAssignedBookings,
-  acceptorrejectBooking,
+  acceptBooking,
+  rejectBooking,
   viewBookingInfo,
   updateBookingStatus,
 } from "@/services/worker/workersFeed";
 import { Spinner } from "@/components/ui/spinner";
+import { useRouter } from "next/navigation";
 
 const WorkersPage = () => {
+  const router = useRouter();
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
-  console.log("selectedBooking: ", selectedBooking);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
@@ -66,7 +68,6 @@ const WorkersPage = () => {
 
   const queryClient = useQueryClient();
 
-  // Get worker profile
   const { data: profileData, isLoading: profileLoading } = useQuery({
     queryKey: ["viewProfile"],
     queryFn: viewProfile,
@@ -81,24 +82,39 @@ const WorkersPage = () => {
     queryKey: ["assignedBookings"],
     queryFn: getAllAssignedBookings,
   });
-  // console.log("bookingsData: ", bookingsData);
+  console.log("bookingsData: ", bookingsData);
+  // console.log("bookingsError: ", bookingsError);
 
-  const acceptRejectMutation = useMutation({
-    mutationFn: acceptorrejectBooking,
-    onSuccess: (data) => {
-      toast.success(
-        `Booking ${
-          actionType === "accept" ? "accepted" : "rejected"
-        } successfully!`
-      );
-      queryClient.invalidateQueries({ queryKey: ["assignedBookings"] });
-      setActionDialogOpen(false);
-      setActionType(null);
-    },
-    onError: (error: any) => {
-      toast.error(`Failed to ${actionType} booking: ${error.message}`);
-    },
-  });
+  const hasNoBookings =
+    bookingsData &&
+    bookingsData.success === false &&
+    bookingsData.message === "No bookings found";
+
+
+const acceptRejectMutation = useMutation({
+  mutationFn: async (bookingId: string) => {
+    if (actionType === "accept") {
+      return await acceptBooking(bookingId);
+    }
+    if (actionType === "reject") {
+      return await rejectBooking(bookingId);
+    }
+  },
+  onSuccess: () => {
+    toast.success(
+      `Booking ${
+        actionType === "accept" ? "accepted" : "rejected"
+      } successfully!`
+    );
+    queryClient.invalidateQueries({ queryKey: ["assignedBookings"] });
+    setActionDialogOpen(false);
+    setActionType(null);
+  },
+  onError: (error: any) => {
+    toast.error(`Failed to ${actionType} booking: ${error.message}`);
+  },
+});
+
 
   // Mutation for updating booking status
   const updateStatusMutation = useMutation({
@@ -134,14 +150,14 @@ const WorkersPage = () => {
     setActionDialogOpen(true);
   };
 
-  // Handle complete booking
+  
   const handleCompleteBooking = (assignment: any) => {
     setSelectedBooking(assignment);
     setActionType("complete");
     setActionDialogOpen(true);
   };
 
-  // Confirm action
+  
   const confirmAction = () => {
     if (!selectedBooking || !actionType) return;
 
@@ -234,6 +250,7 @@ const WorkersPage = () => {
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Assigned Bookings</h2>
+          <div className="gap-2 flex">
           <Button
             variant="outline"
             onClick={() => refetchBookings()}
@@ -242,6 +259,15 @@ const WorkersPage = () => {
           >
             Refresh
           </Button>
+          <Button
+            variant="default"
+            onClick={() => router.push("/bankInformation")}
+            disabled={bookingsLoading}
+            className="cursor-pointer"
+          >
+            Bank Information
+          </Button>
+          </div>
         </div>
 
         {bookingsLoading ? (
@@ -259,6 +285,16 @@ const WorkersPage = () => {
               Failed to load bookings
             </p>
             <Button onClick={() => refetchBookings()}>Try Again</Button>
+          </div>
+        ) : hasNoBookings ? (
+          <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <Home className="mx-auto text-gray-400 mb-3" size={48} />
+            <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
+              No assigned bookings
+            </p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">
+              New cleaning assignments will appear here
+            </p>
           </div>
         ) : bookingsData?.data?.length ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
