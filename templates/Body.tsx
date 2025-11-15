@@ -192,7 +192,7 @@ const Body = () => {
 
         <div className="max-w-3xl mx-auto relative z-10">
           <h2 className="text-3xl font-bold mb-1">
-            Cancel anytime by 24hr cancellation
+            Hazzle free cancellation
           </h2>
           <p className=" mb-8">
             Your first clean is just a click away. Book your trusted cleaning
