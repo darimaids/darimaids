@@ -23,8 +23,7 @@ const Footer = () => {
 
             {/* Tagline */}
             <p className="text-[15px] leading-[22px] text-[#CAC7D1] font-normal">
-              Professional cleaning services to help you reclaim your time and
-              love your home.
+              Sparkly Made Effortlessly
             </p>
           </div>
 
@@ -34,21 +33,17 @@ const Footer = () => {
             <div className="flex flex-col space-y-4 min-w-[160px]">
               <h3 className="text-[16px] font-semibold mb-2">Quick Links</h3>
               <div className="flex flex-col space-y-3">
-                {[
-                  "Home",
-                  "About",
-                  "Services",
-                  "My Bookings",
-                  "FAQs",
-                ].map((link) => (
-                  <a
-                    key={link}
-                    href="#"
-                    className="text-[14px] text-[#CAC7D1] hover:text-white transition-colors font-normal"
-                  >
-                    {link}
-                  </a>
-                ))}
+                {["Home", "About", "Services", "My Bookings", "FAQs"].map(
+                  (link) => (
+                    <a
+                      key={link}
+                      href="#"
+                      className="text-[14px] text-[#CAC7D1] hover:text-white transition-colors font-normal"
+                    >
+                      {link}
+                    </a>
+                  )
+                )}
               </div>
             </div>
 
