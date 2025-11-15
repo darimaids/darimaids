@@ -60,7 +60,7 @@ const Footer = () => {
                       href="mailto:discoverofficel@darimaids.com"
                       className="text-[14px] text-[#CAC7D1] hover:text-white transition-colors font-normal break-all"
                     >
-                      discoverofficel@darimaids.com
+                      hello@darimaids.com
                     </a>
                   </div>
 

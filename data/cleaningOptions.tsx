@@ -14,7 +14,8 @@ export const CLEANING_TYPES = [
   { value: "2-bed-1-bath", label: "2 Bed - 1 Bath" },
   { value: "2-bed-2-bath", label: "2 Bed - 2 Bath" },
   { value: "3-bed-2-bath", label: "3 Bed - 2 Bath" },
-  { value: "1500-sqft-plus", label: "Over 1500 sq. ft" },
+  { value: "4-bed-2-bed", label: "4 Bed - 4 Bath" },
+  
 ];
 
 export const REOCCURENCE_OPTIONS = [
