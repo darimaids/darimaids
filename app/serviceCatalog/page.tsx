@@ -94,7 +94,7 @@ const ServicesPage: React.FC = () => {
                       </div>
                     ))}
 
-                    <div className="mt-5 mb-3">
+                    {/* <div className="mt-5 mb-3">
                       {service.prices?.map((priceItem, idx) => {
                         const [label, price] = priceItem
                           .split("=")
@@ -110,7 +110,7 @@ const ServicesPage: React.FC = () => {
                           </p>
                         );
                       })}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
 

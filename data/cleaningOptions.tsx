@@ -15,7 +15,6 @@ export const CLEANING_TYPES = [
   { value: "2-bed-2-bath", label: "2 Bed - 2 Bath" },
   { value: "3-bed-2-bath", label: "3 Bed - 2 Bath" },
   { value: "4-bed-2-bed", label: "4 Bed - 4 Bath" },
-  
 ];
 
 export const REOCCURENCE_OPTIONS = [
@@ -23,7 +22,4 @@ export const REOCCURENCE_OPTIONS = [
   { value: "weekly", label: "Weekly" },
   { value: "bi-weekly", label: "Bi-Weekly" },
   { value: "monthly", label: "Monthly" },
-  // { value: "past-cleaning-1-week", label: "Last cleaning: 1 Week Ago" },
-  // { value: "past-cleaning-1-month", label: "Last cleaning: 1 Month Ago" },
-  // { value: "past-cleaning-3-plus", label: "Last cleaning: 3+ Months Ago" },
 ];
