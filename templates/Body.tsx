@@ -85,7 +85,17 @@ const Body = () => {
         </div>
       </section>
 
-      <section className="py-20 px-6 sm:px-[286px]">
+      <Link href="/booking">
+        <aside className="py-5 px-6 sm:px-[286px] cursor-pointer">
+          <div className="bg-transparent border border-[#6A4AAD] dark:bg-[#2C1E3A] rounded-lg py-4 px-1 text-center">
+            <p className="text-base sm:text-lg">
+              Schedule your First clean today!
+            </p>
+          </div>
+        </aside>
+      </Link>
+
+      <section className="py-10 px-6 sm:px-[286px]">
         <h2 className="text-3xl font-bold mb-2 text-center">How It Works</h2>
         <p className="text-gray-600 dark:text-gray-400 text-lg mb-14 text-center">
           Three easy steps from booking to bliss. No surprises, just results.
@@ -182,6 +192,10 @@ const Body = () => {
         </div>
       </section>
 
+      <div className="py-5 px-6 sm:px-[286px] text-center">
+        <p className="text-lg font-semibold">Serving major cities across South Florida, including Boca Raton, Delray Beach, West Palm Beach, Fort Lauderdale, Coral Springs, Hollywood, Miami, Miami Beach and more</p>
+      </div>
+
       <section className="bg-[#6A4AAD] py-20 text-center px-6 relative overflow-hidden h-[450px] flex flex-col justify-center items-center text-[#EADDCD]">
         <div className="absolute left-0 md:left-0 top-1/2 transform -translate-y-1/2 opacity-20">
           <img src="/half-logo-left.svg" alt="Darimaids Logo" />
@@ -191,9 +205,7 @@ const Body = () => {
         </div>
 
         <div className="max-w-3xl mx-auto relative z-10">
-          <h2 className="text-3xl font-bold mb-1">
-            Hazzle free cancellation
-          </h2>
+          <h2 className="text-3xl font-bold mb-1">Hassle-free cancellation</h2>
           <p className=" mb-8">
             Your first clean is just a click away. Book your trusted cleaning
             service now!

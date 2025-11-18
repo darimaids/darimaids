@@ -74,7 +74,7 @@ const Hero = () => {
         />
       </div>
       <div className="absolute inset-0 -z-10 block sm:hidden animate-gradient">
-        <div className="w-full h-full bg-linear-to-br from-[#6A4AAD] via-[#CBE8BE] to-[#05CDC2] opacity-90" />
+        <div className="w-full h-full opacity-90" />
       </div>
 
       <div className="max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -95,6 +95,9 @@ const Hero = () => {
           Let our trusted, professional cleaners handle the chores, so you can
           focus on what matters most. Book your spotless clean in just 60
           seconds.
+        </p>
+        <p className="mt-3 text-[#6A4AAD] dark:text-[#6A4AAD] font-semibold text-base sm:text-xl max-w-2xl mx-auto">
+          Proudly serving Palmbeach, Broward, and Miami-Dade
         </p>
 
         <div className="mt-10 mb-10 bg-white dark:bg-[#1E1E1E] border-[0.2px] border-[#C8BCDF] dark:border-gray-800 rounded-xl py-6 sm:p-8 px-4 max-w-[750px] mx-auto">

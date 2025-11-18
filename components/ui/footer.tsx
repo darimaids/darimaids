@@ -23,14 +23,14 @@ const Footer = () => {
 
             {/* Tagline */}
             <p className="text-[15px] leading-[22px] text-[#CAC7D1] font-normal">
-              Sparkly Made Effortlessly
+              Sparkly Made Effortless
             </p>
           </div>
 
           {/* Right Section - Links and Contact */}
           <div className="flex flex-col md:flex-row gap-16">
             {/* Quick Links */}
-            <div className="flex flex-col space-y-4 min-w-[160px]">
+            <div className="flex flex-col space-y-4 min-w-40">
               <h3 className="text-[16px] font-semibold mb-2">Quick Links</h3>
               <div className="flex flex-col space-y-3">
                 {["Home", "About", "Services", "My Bookings", "FAQs"].map(
