@@ -1,6 +1,9 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 
 // components
 import { Button } from "@/components/ui/button";
@@ -14,7 +17,16 @@ import {
 // icons
 import { CheckCircle } from "lucide-react";
 
+//api
+import { getFaqs } from "@/services/faq/faqs";
+
 const Body = () => {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["faqs"],
+    queryFn: getFaqs,
+  });
+  console.log("data: ", data);
+
   return (
     <div className="bg-[#FAFAFA] dark:bg-[#0F0F0F] transition-colors duration-300 text-[#1F2937] dark:text-gray-200">
       <section className="py-20 px-6 sm:px-[286px]">
@@ -68,14 +80,14 @@ const Body = () => {
 
           <div className="relative w-full sm:max-w-md mx-auto lg:mx-0">
             <Image
-              src="/cleaner-light.svg"
+              src="/cleaner.svg"
               alt="Professional cleaner (light)"
               width={400}
               height={450}
               className="object-cover w-full dark:hidden"
             />
             <Image
-              src="/cleaner-dark.svg"
+              src="/cleaner.svg"
               alt="Professional cleaner (dark)"
               width={400}
               height={450}
@@ -193,7 +205,11 @@ const Body = () => {
       </section>
 
       <div className="py-5 px-6 sm:px-[286px] text-center">
-        <p className="text-lg font-semibold">Serving major cities across South Florida, including Boca Raton, Delray Beach, West Palm Beach, Fort Lauderdale, Coral Springs, Hollywood, Miami, Miami Beach and more</p>
+        <p className="text-lg font-semibold">
+          Serving major cities across South Florida, including Boca Raton,
+          Delray Beach, West Palm Beach, Fort Lauderdale, Coral Springs,
+          Hollywood, Miami, Miami Beach and more
+        </p>
       </div>
 
       <section className="bg-[#6A4AAD] py-20 text-center px-6 relative overflow-hidden h-[450px] flex flex-col justify-center items-center text-[#EADDCD]">
@@ -234,142 +250,37 @@ const Body = () => {
         </div>
 
         <div className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible className="space-y-3">
-            <AccordionItem value="item-1">
-              <AccordionTrigger>
-                What type of cleaning do I need?
-              </AccordionTrigger>
-              <AccordionContent>
-                It depends on your home’s condition and how often it’s cleaned.
-                For regular upkeep, choose a <b>Standard Cleaning</b>. If it’s
-                your first time or after a long gap, go for a{" "}
-                <b>Deep Cleaning</b>. Moving in or out? Pick our{" "}
-                <b>Move In/Out Cleaning</b>.
-              </AccordionContent>
-            </AccordionItem>
+          {isLoading && (
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="border rounded-lg p-4">
+                  <div className="flex justify-between items-center">
+                    <div className="w-3/4">
+                      <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-full animate-pulse"></div>
+                    </div>
+                    <div className="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-full animate-pulse" />
+                    <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-3/4 animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-            <AccordionItem value="item-2">
-              <AccordionTrigger>
-                What is included in each type of cleaning?
-              </AccordionTrigger>
-              <AccordionContent>
-                Each service includes core tasks like dusting, vacuuming,
-                mopping, and sanitizing bathrooms and kitchens. Deep cleaning
-                adds extras like appliance interiors, grout scrubbing, vents,
-                and detailed surface polishing. Airbnb and White Glove services
-                are tailored to specific needs.
-              </AccordionContent>
-            </AccordionItem>
+          {isError && <p className="text-red-500">Failed to load FAQs</p>}
 
-            <AccordionItem value="item-3">
-              <AccordionTrigger>
-                Do you need to see my home before giving a quote?
-              </AccordionTrigger>
-              <AccordionContent>
-                Not necessarily. Most quotes are based on your home’s size and
-                type of service. However, if you request a custom or complex
-                cleaning, we may schedule a quick consultation to ensure
-                accurate pricing.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-4">
-              <AccordionTrigger>
-                Is my personal information safe?
-              </AccordionTrigger>
-              <AccordionContent>
-                Absolutely. We take data privacy seriously. Your details are
-                securely encrypted and used only for service-related purposes.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-5">
-              <AccordionTrigger>
-                What forms of payment do you accept?
-              </AccordionTrigger>
-              <AccordionContent>
-                We accept major debit/credit cards and secure online payment
-                methods. Cash is not accepted for safety and accountability
-                reasons.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-6">
-              <AccordionTrigger>
-                What’s the difference between a standard and deep cleaning?
-              </AccordionTrigger>
-              <AccordionContent>
-                Standard cleaning maintains cleanliness — ideal for weekly or
-                monthly upkeep. Deep cleaning is more detailed, reaching under
-                furniture, scrubbing tiles, and sanitizing neglected areas.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-7">
-              <AccordionTrigger>
-                How long will my cleaning take?
-              </AccordionTrigger>
-              <AccordionContent>
-                It depends on your home’s size and selected service. A standard
-                clean for a 2-bed home typically takes 2–3 hours. Deep or
-                move-in/out cleanings may take longer.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-8">
-              <AccordionTrigger>
-                Do I need to provide cleaning supplies?
-              </AccordionTrigger>
-              <AccordionContent>
-                Nope! Our cleaners come fully equipped with all eco-friendly
-                products and tools needed to deliver a spotless clean.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-9">
-              <AccordionTrigger>
-                Are your products pet friendly?
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes. We use eco-conscious, non-toxic, and pet-safe cleaning
-                solutions. You can rest easy knowing your furry friends are
-                safe.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-10">
-              <AccordionTrigger>
-                Can I schedule recurring cleaning?
-              </AccordionTrigger>
-              <AccordionContent>
-                Definitely! Choose from weekly, bi-weekly, or monthly plans for
-                continuous sparkle — with flexible rescheduling anytime through
-                your account.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-11">
-              <AccordionTrigger>
-                Cancellation or Reschedule policy
-              </AccordionTrigger>
-              <AccordionContent>
-                You can cancel or reschedule up to 24 hours before your
-                appointment for free. Cancellations within 24 hours may incur a
-                small fee to cover our team’s reserved time.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-12">
-              <AccordionTrigger>
-                What makes DariMaids different?
-              </AccordionTrigger>
-              <AccordionContent>
-                DariMaids combines professional-grade quality, vetted cleaners,
-                eco-friendly practices, transparent pricing, and stellar
-                customer support. We’re built on trust, care, and consistency.
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          {!isLoading && data?.data?.length > 0 && (
+            <Accordion type="single" collapsible className="space-y-3">
+              {data.data.map((faq: any, index: any) => (
+                <AccordionItem key={faq._id} value={`faq-${index}`}>
+                  <AccordionTrigger>{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
         </div>
       </section>
     </div>

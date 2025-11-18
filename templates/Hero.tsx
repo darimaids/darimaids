@@ -9,32 +9,11 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronDownIcon, Loader2 } from "lucide-react";
 
 // components
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// data
-import {
-  SERVICE_TYPES,
-  CLEANING_TYPES,
-  REOCCURENCE_OPTIONS,
-} from "@/data/cleaningOptions";
-
 // 🧠 store
-import { useBookingStore } from "@/store/useBookingStore";
 import { Spinner } from "@/components/ui/spinner";
 
 const Hero = () => {
@@ -99,6 +78,14 @@ const Hero = () => {
         <p className="mt-3 text-[#6A4AAD] dark:text-[#6A4AAD] font-semibold text-base sm:text-xl max-w-2xl mx-auto">
           Proudly serving Palmbeach, Broward, and Miami-Dade
         </p>
+
+        <Image
+          src="/team_light.svg"
+          alt="Hero Image"
+          width={800}
+          height={600}
+          className="mx-auto mt-10"
+        />
 
         <div className="mt-10 mb-10 bg-white dark:bg-[#1E1E1E] border-[0.2px] border-[#C8BCDF] dark:border-gray-800 rounded-xl py-6 sm:p-8 px-4 max-w-[750px] mx-auto">
           <div className="flex justify-between items-center mb-6">
@@ -178,6 +165,7 @@ const Hero = () => {
                 Phone Number
               </label>
               <Input
+                value={phone}
                 className="w-full"
                 placeholder="Enter your Phone number"
                 onChange={(e) => setPhone(e.target.value)}
@@ -191,6 +179,7 @@ const Hero = () => {
                 Email Address
               </label>
               <Input
+                value={email}
                 className="w-full"
                 placeholder="Enter your Email address"
                 onChange={(e) => setEmail(e.target.value)}
