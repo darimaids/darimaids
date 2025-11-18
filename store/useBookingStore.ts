@@ -12,6 +12,7 @@ export interface BookingState {
   zipCode: string;
   state: string;
   county: string;
+  streetNumber: string;
   date: Date | undefined;
   reoccurrence: string;
   lastCleaning: string;
@@ -59,6 +60,7 @@ export const useBookingStore = create<BookingStore>((set) => ({
     address: "",
     city: "",
     zipCode: "",
+    streetNumber: "",
     state: "",
     county: "",
     date: undefined,
@@ -116,6 +118,7 @@ export const useBookingStore = create<BookingStore>((set) => ({
         reoccurrence: "",
         lastCleaning: "",
         pets: "",
+        streetNumber: "",
         specialRequests: "",
         selectedAddons: [],
         discountCode: "",

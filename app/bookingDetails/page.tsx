@@ -36,10 +36,13 @@ const BookingDetailsPage = () => {
         email: payment.email,
         phoneNumber: payment.phone,
         address: booking.address,
+        city: booking.city,
         province: booking.state,
+        county: booking.county,
         zipCode: booking.zipCode,
         services: booking.cleaningType || booking.serviceType,
         cleaners: booking.bedrooms || "1",
+        streetNumber: booking.streetNumber || "N/A",
         date: booking.date
           ? booking.date.toISOString().split("T")[0]
           : new Date().toISOString().split("T")[0],

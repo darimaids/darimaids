@@ -7,7 +7,7 @@ export const InfoRow = ({
 }) => (
   <div className="flex justify-between">
     <span className="text-gray-600 dark:text-gray-400">{label}</span>
-    <span className="font-medium text-right max-w-[300px] wrap-break-words">
+    <span className="font-medium text-right max-w-[300px] wrap-break-words capitalize">
       {value || "N/A"}
     </span>
   </div>

@@ -75,7 +75,7 @@ const BookingSuccessContent = () => {
       </div>
 
       <div className="text-center">
-        <h1 className="font-bold text-2xl mb-2">Payment Successful</h1>
+        <h1 className="font-bold text-2xl mb-2">Booking Successful</h1>
         <p className="mb-6 text-[#666] dark:text-gray-400">
           Your booking has been confirmed. Our team is excited to make your home
           sparkle!

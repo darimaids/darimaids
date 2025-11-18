@@ -410,7 +410,7 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                <div className="sm:col-span-2">
+                <div className="">
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Street Address *
                   </label>
@@ -418,6 +418,18 @@ const Booking = () => {
                     placeholder="Enter your street address"
                     value={booking.address}
                     onChange={(e) => updateBooking("address", e.target.value)}
+                  />
+                </div>
+                <div className="">
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    Apartment Number *
+                  </label>
+                  <Input
+                    placeholder="Enter your appartment number"
+                    value={booking.streetNumber}
+                    onChange={(e) =>
+                      updateBooking("streetNumber", e.target.value)
+                    }
                   />
                 </div>
 
