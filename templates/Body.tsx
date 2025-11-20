@@ -25,11 +25,10 @@ const Body = () => {
     queryKey: ["faqs"],
     queryFn: getFaqs,
   });
-  console.log("data: ", data);
 
   return (
     <div className="bg-[#FAFAFA] dark:bg-[#0F0F0F] transition-colors duration-300 text-[#1F2937] dark:text-gray-200">
-      <section className="py-20 px-6 sm:px-[286px]">
+      <section className="py-20 px-6 md:px-[290px]">
         <div>
           <h2 className="text-3xl font-bold mb-2 text-center">
             Why Choose Darimaids?
@@ -53,16 +52,16 @@ const Body = () => {
                   desc: "If you’re not completely happy, we’ll return and fix it at no additional cost. Your peace of mind is guaranteed.",
                 },
                 {
-                  title: "Transparent Pricing",
-                  desc: "No hidden fees or surprise charges. You see the final price before booking, and that’s what you pay.",
+                  title: "Transparent, Upfront Estimates",
+                  desc: "Get a clear estimate before scheduling. Final pricing is based on the actual condition and level of detail your home requires, always with your approval.",
                 },
                 {
                   title: "Easy Online Management",
-                  desc: "Schedule, reschedule, or communicate with your cleaner easily through our platform. Total control at your fingertips.",
+                  desc: "Book, reschedule, manage, and communicate with ease through our platform. Fast, simple, and convenient. Total control at your fingertips",
                 },
                 {
                   title: "All Supplies Included",
-                  desc: "Our professionals bring all necessary equipment and eco-friendly cleaning products. You provide nothing but access.",
+                  desc: "Our professionals arrive fully equipped with tools and eco-friendly cleaning products. You provide nothing but access.",
                 },
               ].map((item, index) => (
                 <li key={index} className="flex gap-3 items-start">
@@ -98,16 +97,16 @@ const Body = () => {
       </section>
 
       <Link href="/booking">
-        <aside className="py-5 px-6 sm:px-[286px] cursor-pointer">
-          <div className="bg-transparent border border-[#6A4AAD] dark:bg-[#2C1E3A] rounded-lg py-4 px-1 text-center">
+        <aside className="py-5 px-6 cursor-pointer md:px-[290px]">
+          <Button className="w-full py-6">
             <p className="text-base sm:text-lg">
               Schedule your First clean today!
             </p>
-          </div>
+          </Button>
         </aside>
       </Link>
 
-      <section className="py-10 px-6 sm:px-[286px]">
+      <section className="py-10 px-6 md:px-[290px]">
         <h2 className="text-3xl font-bold mb-2 text-center">How It Works</h2>
         <p className="text-gray-600 dark:text-gray-400 text-lg mb-14 text-center">
           Three easy steps from booking to bliss. No surprises, just results.
@@ -122,7 +121,7 @@ const Body = () => {
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Sign up in just 30 seconds with your email or social login. This
-                helps us save your details for faster booking next time and lets
+                helps us save your details for faster booking next time and let
                 you track all your cleanings in one place.
               </p>
             </div>
@@ -204,7 +203,7 @@ const Body = () => {
         </div>
       </section>
 
-      <div className="py-5 px-6 sm:px-[286px] text-center">
+      <div className="py-5 px-6 text-center md:px-[290px] mb-10">
         <p className="text-lg font-semibold">
           Serving major cities across South Florida, including Boca Raton,
           Delray Beach, West Palm Beach, Fort Lauderdale, Coral Springs,
@@ -238,7 +237,7 @@ const Body = () => {
       </section>
 
       {/* FAQ SECTION */}
-      <section className="py-20 px-6 sm:px-[286px] bg-[#FAFAFA] dark:bg-[#0F0F0F] transition-colors duration-300">
+      <section className="py-20 px-6  bg-[#FAFAFA] dark:bg-[#0F0F0F] transition-colors duration-300">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold text-[#1F2937] dark:text-white mb-3">
             Frequently Asked Questions
@@ -275,8 +274,12 @@ const Body = () => {
             <Accordion type="single" collapsible className="space-y-3">
               {data.data.map((faq: any, index: any) => (
                 <AccordionItem key={faq._id} value={`faq-${index}`}>
-                  <AccordionTrigger>{faq.question}</AccordionTrigger>
-                  <AccordionContent>{faq.answer}</AccordionContent>
+                  <AccordionTrigger className="text-base">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-base">
+                    {faq.answer}
+                  </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>

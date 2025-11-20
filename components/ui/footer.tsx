@@ -20,11 +20,15 @@ const Footer = () => {
                 className="h-8 w-auto"
               />
             </div>
-
             {/* Tagline */}
             <p className="text-[15px] leading-[22px] text-[#CAC7D1] font-normal">
-              Sparkly Made Effortless
+              Sparkly Made Effortless<br /> Professional cleaning services to help you
+              reclaim your time and love your home.
             </p>
+            {/* <p className="text-[15px] leading-[22px] text-[#CAC7D1] font-normal">
+              Professional cleaning services to help you reclaim your time and
+              love your home.
+            </p> */}
           </div>
 
           {/* Right Section - Links and Contact */}

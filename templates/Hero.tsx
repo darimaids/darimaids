@@ -35,12 +35,12 @@ const Hero = () => {
   };
   return (
     <section className="relative overflow-hidden pt-20 pb-24 md:pt-16 md:pb-32">
-      <div className="absolute -top-[100px] inset-0 -z-10 w-full h-full hidden sm:block">
+      <div className="absolute sm:-top-[590px] md:-top-[550px] lg:-top-[400px] inset-0 -z-10 w-full h-full hidden sm:block">
         <Image
           src="/hero_splash-light.svg"
           alt="Decorative colorful background shapes (light)"
           fill
-          className="object-cover object-center opacity-90 dark:hidden"
+          className=" opacity-90 dark:hidden"
           priority
         />
 
@@ -48,7 +48,7 @@ const Hero = () => {
           src="/hero-splash-dark.svg"
           alt="Decorative colorful background shapes (dark)"
           fill
-          className="object-cover object-center opacity-90 hidden dark:block"
+          className="opacity-90 hidden dark:block"
           priority
         />
       </div>
@@ -76,16 +76,18 @@ const Hero = () => {
           seconds.
         </p>
         <p className="mt-3 text-[#6A4AAD] dark:text-[#6A4AAD] font-semibold text-base sm:text-xl max-w-2xl mx-auto">
-          Proudly serving Palmbeach, Broward, and Miami-Dade
+          Proudly serving • Palmbeach • Broward • Miami-Dade
         </p>
 
-        <Image
-          src="/team_light.svg"
-          alt="Hero Image"
-          width={800}
-          height={600}
-          className="mx-auto mt-10"
-        />
+        <div className="flex justify-center items-center mt-5">
+          <Image
+            src="/team_light.svg"
+            alt="Hero Image"
+            width={736}
+            height={491}
+            className=""
+          />
+        </div>
 
         <div className="mt-10 mb-10 bg-white dark:bg-[#1E1E1E] border-[0.2px] border-[#C8BCDF] dark:border-gray-800 rounded-xl py-6 sm:p-8 px-4 max-w-[750px] mx-auto">
           <div className="flex justify-between items-center mb-6">
