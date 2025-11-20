@@ -61,37 +61,32 @@ const Booking = () => {
   const [addonsPrice, setAddonsPrice] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  // Helper function to extract bedrooms and bathrooms from cleaning type
-  const getBedroomsBathroomsFromCleaningType = (cleaningType: string) => {
-    switch (cleaningType) {
-      case "studio":
-        return { bedrooms: "0", bathrooms: "1" };
-      case "2-bed-1-bath":
-        return { bedrooms: "2", bathrooms: "1" };
-      case "2-bed-2-bath":
-        return { bedrooms: "2", bathrooms: "2" };
-      case "3-bed-2-bath":
-        return { bedrooms: "3", bathrooms: "2" };
-      case "1500-sqft-plus":
-        return {
-          bedrooms: booking.bedrooms || "3",
-          bathrooms: booking.bathrooms || "2",
-        };
-      default:
-        return { bedrooms: "1", bathrooms: "1" };
-    }
-  };
-
-  // Update bedrooms and bathrooms when cleaning type changes
+  //* Auto-calculate cleaningType based on bedrooms and bathrooms
   useEffect(() => {
-    if (booking.cleaningType) {
-      const { bedrooms, bathrooms } = getBedroomsBathroomsFromCleaningType(
-        booking.cleaningType
-      );
-      updateBooking("bedrooms", bedrooms);
-      updateBooking("bathrooms", bathrooms);
+    if (booking.bedrooms && booking.bathrooms) {
+      const beds = parseInt(booking.bedrooms);
+      const baths = parseInt(booking.bathrooms);
+
+      let cleaningType = "";
+
+      if (beds === 1 && baths === 1) {
+        cleaningType = "studio";
+      } else if (beds === 2 && baths === 1) {
+        cleaningType = "2-bed-1-bath";
+      } else if (beds === 2 && baths === 2) {
+        cleaningType = "2-bed-2-bath";
+      } else if (beds === 3 && baths === 2) {
+        cleaningType = "3-bed-2-bath";
+      } else if (beds >= 4 || (beds >= 3 && baths >= 3)) {
+        cleaningType = "1500-sqft-plus";
+      } else {
+        // Default fallback for other combinations
+        cleaningType = "1500-sqft-plus";
+      }
+
+      updateBooking("cleaningType", cleaningType);
     }
-  }, [booking.cleaningType]);
+  }, [booking.bedrooms, booking.bathrooms]);
 
   //* recalculate pricing whenever relevant booking data changes
   useEffect(() => {
@@ -210,15 +205,6 @@ const Booking = () => {
     updateBooking("selectedAddons", updated);
   };
 
-  const getServiceDescription = () => {
-    const service = SERVICES.find(
-      (s) =>
-        s.id === booking.serviceType.replace("-cleaning", "") ||
-        s.id === booking.serviceType
-    );
-    return service?.description || "";
-  };
-
   const handleSubmit = () => {
     setLoading(true);
     console.log("Submitting booking:", { booking, payment });
@@ -233,6 +219,8 @@ const Booking = () => {
     booking.serviceType &&
     booking.cleaningType &&
     booking.squareFootage &&
+    booking.bedrooms &&
+    booking.bathrooms &&
     booking.lastCleaning &&
     booking.address &&
     booking.city &&
@@ -240,6 +228,7 @@ const Booking = () => {
     booking.state &&
     booking.county &&
     booking.pets &&
+    booking.streetNumber &&
     payment.firstName &&
     payment.lastName &&
     payment.email &&
@@ -303,7 +292,6 @@ const Booking = () => {
                     onChange={(e) => {
                       const value = e.target.value;
                       updatePayment("email", value);
-                      localStorage.setItem("userEmail", value);
                     }}
                   />
                 </div>
@@ -352,29 +340,6 @@ const Booking = () => {
 
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
-                    Type of Cleaning *
-                  </label>
-                  <Select
-                    value={booking.cleaningType}
-                    onValueChange={(value) =>
-                      updateBooking("cleaningType", value)
-                    }
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select cleaning type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CLEANING_TYPES.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Square Foot Est. *
                   </label>
                   <Input
@@ -385,6 +350,46 @@ const Booking = () => {
                     }
                     type="number"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    Number of Bedrooms *
+                  </label>
+                  <Select
+                    value={booking.bedrooms}
+                    onValueChange={(value) => updateBooking("bedrooms", value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select bedrooms" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1</SelectItem>
+                      <SelectItem value="2">2</SelectItem>
+                      <SelectItem value="3">3</SelectItem>
+                      <SelectItem value="4">4+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    Number of Bathrooms *
+                  </label>
+                  <Select
+                    value={booking.bathrooms}
+                    onValueChange={(value) => updateBooking("bathrooms", value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select bathrooms" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1</SelectItem>
+                      <SelectItem value="2">2</SelectItem>
+                      <SelectItem value="3">3</SelectItem>
+                      <SelectItem value="4">4+</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>
@@ -714,16 +719,6 @@ const Booking = () => {
                   Prices shown are estimates. Final cost may vary based on the
                   home's size, condition, or additional services requested
                 </p>
-              </div>
-
-              <div className="flex items-center space-x-2 mt-2">
-                <Checkbox id="proceedWithoutCard" />
-                <label
-                  htmlFor="proceedWithoutCard"
-                  className="text-sm text-gray-700 dark:text-gray-200"
-                >
-                  Proceed without credit card information
-                </label>
               </div>
 
               <Button

@@ -160,15 +160,15 @@ const BookingsPage = () => {
   const getStatusVariant = (status: string) => {
     switch (status) {
       case "successful":
-        return "default";
+        return "success";
       case "pending":
-        return "secondary";
+        return "pending";
       case "completed":
-        return "default";
+        return "success";
       case "cancelled":
         return "destructive";
       default:
-        return "secondary";
+        return "default";
     }
   };
 
@@ -378,8 +378,8 @@ const BookingsPage = () => {
                         <span className="truncate">{booking.address}</span>
                       </div>
                       <Badge
-                        variant="secondary"
-                        className="text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                        variant="pending"
+                        className="text-xs"
                       >
                         Pending
                       </Badge>
