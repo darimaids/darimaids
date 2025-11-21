@@ -232,7 +232,10 @@ const Booking = () => {
     payment.firstName &&
     payment.lastName &&
     payment.email &&
-    payment.phone;
+    payment.phone &&
+    booking.reoccurrence &&
+    booking.date &&
+    booking.time;
 
   return (
     <div className="py-12 px-4 sm:px-8 md:px-12 lg:px-[286px] bg-white dark:bg-[#0D0D0D] text-[#1F2937] dark:text-gray-100 transition-colors duration-300">
