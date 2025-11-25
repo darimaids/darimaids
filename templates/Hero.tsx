@@ -81,11 +81,11 @@ const Hero = () => {
 
         <div className="flex justify-center items-center mt-5">
           <Image
-            src="/team_light.svg"
+            src="/hero_banner.svg"
             alt="Hero Image"
             width={736}
             height={491}
-            className=""
+            className="rounded-sm"
           />
         </div>
 

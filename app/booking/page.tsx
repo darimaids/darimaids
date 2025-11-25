@@ -581,6 +581,12 @@ const Booking = () => {
                           );
                           setOpen(false);
                         }}
+                        disabled={(date) => {
+                          // Disable all dates before today
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return date < today;
+                        }}
                       />
                     </PopoverContent>
                   </Popover>
