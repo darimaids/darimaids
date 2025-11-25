@@ -11,56 +11,44 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
-// store
-import { useCustomerStore } from "@/store/useCustomerStore";
-
 // api
-import { login } from "@/services/auth/authentication";
+import { resetPasssword } from "@/services/auth/authentication";
 
 // icons
 import { EyeOff, Eye } from "lucide-react";
-import Link from "next/link";
 
-const LoginPage = () => {
+const ResetPassword = () => {
   const router = useRouter();
-  const { setCustomerData } = useCustomerStore();
-  const [email, setEmail] = useState("");
+
+  const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: login,
+    mutationFn: resetPasssword,
     onSuccess: (res: any) => {
-      if (res?.success && res?.data?.token && res?.data?.user) {
-        const { token, user } = res.data;
-        sessionStorage.setItem("accessToken", token);
-        setCustomerData(token, user);
-        toast.success("Login Successful!");
+      if (res?.success) {
+        toast.success(res?.message || "Password reset successfully");
 
-        if (user.role === "worker") {
-          router.push("/workerportal");
-        } else if (user.role === "customer") {
-          router.push("/");
-        } else {
-          router.push("/");
-        }
+        // Redirect user to login page
+        router.push("/login");
       } else {
-        toast.error("Login failed. Please try again.");
+        toast.error("Something went wrong. Please try again.");
       }
     },
     onError: (error: any) => {
-      console.error("Login Error:", error);
-      toast.error("Invalid credentials");
+      console.error("Reset Password Error:", error);
+      toast.error(error || "An error occurred");
     },
   });
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      toast.info("Please fill in all fields.");
+  const handleSubmit = () => {
+    if (!token || !password) {
+      toast.info("Please enter OTP and new password.");
       return;
     }
 
-    mutate({ email, password });
+    mutate({ token, password });
   };
 
   return (
@@ -78,33 +66,33 @@ const LoginPage = () => {
 
         {/* Header */}
         <h1 className="text-lg sm:text-xl font-semibold text-center dark:text-white mb-8">
-          Log in to your account
+          Reset Password
         </h1>
 
         {/* Form */}
         <div className="space-y-4">
           <div>
             <label className="block text-sm text-[#666] dark:text-gray-300 mb-1">
-              Email Address
+              OTP Code
             </label>
             <Input
-              type="email"
-              placeholder="Enter your Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full"
+              type="text"
+              placeholder="Enter OTP"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              className="w-full text-center tracking-[6px] text-lg dark:text-white font-medium"
             />
           </div>
 
           <div>
             <label className="block text-sm text-[#666] dark:text-gray-300 mb-1">
-              Password
+              New Password
             </label>
 
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
+                placeholder="Enter new password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pr-10"
@@ -120,42 +108,23 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <Link href="/forgot-password" className="block text-end">
-            <div className="">
-              <p className="font-semibold text-[#6A4AAD] cursor-pointer">
-                Forgot Password?
-              </p>
-            </div>
-          </Link>
-
           <Button
             className="w-full py-6 mt-4 text-white font-semibold"
             disabled={isPending}
-            onClick={handleLogin}
+            onClick={handleSubmit}
           >
             {isPending ? (
               <span className="flex items-center gap-2 justify-center">
                 <Spinner />
               </span>
             ) : (
-              "Login"
+              "Reset Password"
             )}
           </Button>
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-6">
-          Don’t have an account?{" "}
-          <span
-            className="text-[#6A4AAD] font-semibold cursor-pointer hover:underline"
-            onClick={() => router.push("/signup")}
-          >
-            Sign up
-          </span>
-        </p>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default ResetPassword;

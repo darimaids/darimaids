@@ -63,10 +63,7 @@ export const otpVerification = async (code: any) => {
 
 export const forgotPassword = async (data: any) => {
   try {
-    const response = await publicApi.post(
-      "/api/v1/booking/createBookingPayment",
-      data
-    );
+    const response = await publicApi.post("/api/v1/user/forgot-password", data);
     // console.log("API response:", response.data);
     return response?.data;
   } catch (error) {
@@ -77,10 +74,7 @@ export const forgotPassword = async (data: any) => {
 
 export const resetPasssword = async (data: any) => {
   try {
-    const response = await publicApi.post(
-      "/api/v1/booking/createBookingPayment",
-      data
-    );
+    const response = await publicApi.post("/api/v1/user/reset-password", data);
     // console.log("API response:", response.data);
     return response?.data;
   } catch (error) {
