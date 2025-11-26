@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // components
 import {
@@ -31,7 +32,6 @@ import {
   CLEANING_TYPES,
   REOCCURENCE_OPTIONS,
 } from "@/data/cleaningOptions";
-import { SERVICES } from "@/data/services";
 import { COUNTIES } from "@/data/counties";
 import { STATES } from "@/data/states";
 import {
@@ -39,9 +39,10 @@ import {
   LAST_CLEANING_OPTIONS,
   PET_OPTIONS,
 } from "@/data/homeoptions";
+import { isValidZipCode, getCityByZipCode } from "@/data/zipcodes";
 
 // icons
-import { ChevronDownIcon, TriangleAlert } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 
 // store
 import { useBookingStore } from "@/store/useBookingStore";
@@ -50,6 +51,7 @@ const Booking = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isZipCodeValid, setIsZipCodeValid] = useState(true);
 
   const booking = useBookingStore((state) => state.booking);
   const payment = useBookingStore((state) => state.payment);
@@ -80,7 +82,6 @@ const Booking = () => {
       } else if (beds >= 4 || (beds >= 3 && baths >= 3)) {
         cleaningType = "1500-sqft-plus";
       } else {
-        // Default fallback for other combinations
         cleaningType = "1500-sqft-plus";
       }
 
@@ -205,7 +206,44 @@ const Booking = () => {
     updateBooking("selectedAddons", updated);
   };
 
+  const handleZipCodeChange = (value: string) => {
+    // Only allow numbers
+    const numericValue = value.replace(/\D/g, "");
+    updateBooking("zipCode", numericValue);
+
+    // Only validate if ZIP code is 5 digits long
+    if (numericValue.length === 5) {
+      const isValid = isValidZipCode(numericValue);
+      setIsZipCodeValid(isValid);
+
+      if (!isValid) {
+        toast.error("Service unavailable in this region", {
+          description: "We currently don't service this ZIP code area.",
+        });
+      } else {
+        // Auto-fill city and county based on ZIP code
+        const locationInfo = getCityByZipCode(numericValue);
+        if (locationInfo) {
+          toast.success("ZIP code verified!", {
+            description: `Service available in ${locationInfo.city}, ${locationInfo.county} County`,
+          });
+          updateBooking("city", locationInfo.city);
+          updateBooking("county", locationInfo.county);
+        }
+      }
+    } else {
+      setIsZipCodeValid(true); // Reset validation while typing
+    }
+  };
+
   const handleSubmit = () => {
+    if (!isZipCodeValid) {
+      toast.error("Cannot proceed with booking", {
+        description: "Please enter a valid ZIP code in our service area.",
+      });
+      return;
+    }
+
     setLoading(true);
     console.log("Submitting booking:", { booking, payment });
 
@@ -235,7 +273,8 @@ const Booking = () => {
     payment.phone &&
     booking.reoccurrence &&
     booking.date &&
-    booking.time;
+    booking.time &&
+    isZipCodeValid;
 
   return (
     <div className="py-12 px-4 sm:px-8 md:px-12 lg:px-[286px] bg-white dark:bg-[#0D0D0D] text-[#1F2937] dark:text-gray-100 transition-colors duration-300">
@@ -292,10 +331,7 @@ const Booking = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={payment.email}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      updatePayment("email", value);
-                    }}
+                    onChange={(e) => updatePayment("email", e.target.value)}
                   />
                 </div>
 
@@ -418,7 +454,7 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                <div className="">
+                <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Street Address *
                   </label>
@@ -428,27 +464,17 @@ const Booking = () => {
                     onChange={(e) => updateBooking("address", e.target.value)}
                   />
                 </div>
-                <div className="">
+
+                <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
                     Apartment Number *
                   </label>
                   <Input
-                    placeholder="Enter your appartment number"
+                    placeholder="Enter your apartment number"
                     value={booking.streetNumber}
                     onChange={(e) =>
                       updateBooking("streetNumber", e.target.value)
                     }
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
-                    City *
-                  </label>
-                  <Input
-                    placeholder="Enter your city"
-                    value={booking.city}
-                    onChange={(e) => updateBooking("city", e.target.value)}
                   />
                 </div>
 
@@ -459,7 +485,29 @@ const Booking = () => {
                   <Input
                     placeholder="Enter zip code"
                     value={booking.zipCode}
-                    onChange={(e) => updateBooking("zipCode", e.target.value)}
+                    onChange={(e) => handleZipCodeChange(e.target.value)}
+                    maxLength={5}
+                    className={`${
+                      !isZipCodeValid && booking.zipCode.length === 5
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                        : ""
+                    }`}
+                  />
+                  {!isZipCodeValid && booking.zipCode.length === 5 && (
+                    <p className="text-xs text-red-500 mt-1">
+                      Service not available in this ZIP code
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
+                    City *
+                  </label>
+                  <Input
+                    placeholder="Enter your city"
+                    value={booking.city}
+                    onChange={(e) => updateBooking("city", e.target.value)}
                   />
                 </div>
 
@@ -582,7 +630,6 @@ const Booking = () => {
                           setOpen(false);
                         }}
                         disabled={(date) => {
-                          // Disable all dates before today
                           const today = new Date();
                           today.setHours(0, 0, 0, 0);
                           return date < today;
