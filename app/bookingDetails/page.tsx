@@ -201,7 +201,7 @@ const BookingDetailsPage = () => {
         county: booking.county,
         zipCode: booking.zipCode,
         services: booking.cleaningType || booking.serviceType,
-        cleaners: booking.bedrooms || "1",
+        cleaners: "1",
         streetNumber: booking.streetNumber || "N/A",
         date: booking.date
           ? booking.date.toISOString().split("T")[0]
