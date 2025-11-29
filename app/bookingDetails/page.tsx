@@ -456,14 +456,14 @@ const BookingDetailsPage = () => {
                 >
                   I have read and agree to DariMaids{" "}
                   <a
-                    href="/terms-and-conditions"
+                    href="/termsandconditions"
                     className="text-[#6A4AAD] underline hover:text-[#5a3b99]"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Terms & Conditions
                   </a>{" "}
-                  and cancellation policy.
+                  a and cancellation policy.
                 </Label>
               </div>
 
@@ -487,7 +487,7 @@ const BookingDetailsPage = () => {
                   at any time or text 'HELP' for assistance. Message and data
                   rates may apply.{" "}
                   <a
-                    href="/privacy-policy"
+                    href="/privacypolicy"
                     className="text-[#6A4AAD] underline hover:text-[#5a3b99]"
                     target="_blank"
                     rel="noopener noreferrer"

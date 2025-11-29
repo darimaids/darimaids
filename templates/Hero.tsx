@@ -12,19 +12,20 @@ import { ArrowRight, ChevronDownIcon, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Spinner } from "@/components/ui/spinner";
 
 // 🧠 store
-import { Spinner } from "@/components/ui/spinner";
+import { useBookingStore } from "@/store/useBookingStore";
 
 const Hero = () => {
   const router = useRouter();
 
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const payment = useBookingStore((state) => state.payment);
+  const updatePayment = useBookingStore((state) => state.updatePayment);
   const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const isFormComplete = phone.trim() !== "" && consent;
+  const isFormComplete = payment.phone.trim() !== "" && consent;
 
   const handleQuote = () => {
     setLoading(true);
@@ -110,55 +111,6 @@ const Hero = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
-            {/* <div>
-              <label
-                htmlFor="serviceType"
-                className="block text-start text-[14px] text-[#666]"
-              >
-                Service Type
-              </label>
-              <Select
-                value={localForm.serviceType}
-                onValueChange={(value) => handleChange("serviceType", value)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select service type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SERVICE_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div> */}
-
-            {/* 
-            <div>
-              <label
-                htmlFor="serviceType"
-                className="block text-start text-[14px] text-[#666]"
-              >
-                Type of cleaning
-              </label>
-              <Select
-                value={localForm.cleaningType}
-                onValueChange={(value) => handleChange("cleaningType", value)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select cleaning type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CLEANING_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div> */}
-
             <div>
               <label
                 htmlFor="Phone Number"
@@ -167,10 +119,10 @@ const Hero = () => {
                 Phone Number
               </label>
               <Input
-                value={phone}
+                value={payment.phone}
                 className="w-full"
                 placeholder="Enter your Phone number"
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => updatePayment("phone", e.target.value)}
               />
             </div>
             <div>
@@ -181,71 +133,12 @@ const Hero = () => {
                 Email Address
               </label>
               <Input
-                value={email}
+                value={payment.email}
                 className="w-full"
                 placeholder="Enter your Email address"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => updatePayment("email", e.target.value)}
               />
             </div>
-
-            {/* <div>
-              <label
-                htmlFor="serviceType"
-                className="block text-start text-[14px] text-[#666]"
-              >
-                Reoccurence
-              </label>
-              <Select
-                value={localForm.reoccurrence}
-                onValueChange={(value) => handleChange("reoccurrence", value)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  {REOCCURENCE_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div> */}
-
-            {/* <div>
-              <label
-                htmlFor="serviceType"
-                className="block text-start text-[14px] text-[#666]"
-              >
-                Date
-              </label>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-between font-normal py-5"
-                  >
-                    {localForm.date
-                      ? localForm.date.toLocaleDateString()
-                      : "Select date"}
-                    <ChevronDownIcon className="ml-2" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto overflow-hidden p-0"
-                  align="start"
-                >
-                  <Calendar
-                    mode="single"
-                    selected={localForm.date}
-                    onSelect={(date) => {
-                      handleChange("date", date);
-                      setOpen(false);
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div> */}
           </div>
 
           <Button
@@ -277,7 +170,7 @@ const Hero = () => {
               regarding your quote request, service updates, and exclusive
               offers. You may opt out at any time.{" "}
               <Link
-                href="/terms-and-privacy"
+                href="/termsandconditions"
                 className="text-[#6A4AAD] underline hover:text-[#5a3b99]"
               >
                 Terms & Privacy Policy

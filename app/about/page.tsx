@@ -44,7 +44,7 @@ const About = () => {
     <div className="relative bg-[#FAFAFA] dark:bg-[#0F0F0F] transition-colors duration-300">
       {/* Scroll Progress Bar */}
       <div
-        className="fixed top-0 left-0 h-[4px] bg-[#6A4AAD] z-50 transition-all duration-200 ease-out"
+        className="fixed top-0 left-0 h-1 bg-[#6A4AAD] z-50 transition-all duration-200 ease-out"
         style={{ width: `${scrollProgress}%` }}
       />
 
