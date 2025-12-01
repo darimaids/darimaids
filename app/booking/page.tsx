@@ -331,7 +331,10 @@ const Booking = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={payment.email}
-                    onChange={(e) => updatePayment("email", e.target.value)}
+                    onChange={(e) => {
+                      updatePayment("email", e.target.value);
+                      localStorage.setItem("userEmail", e.target.value);
+                    }}
                   />
                 </div>
 
