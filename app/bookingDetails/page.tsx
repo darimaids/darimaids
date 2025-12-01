@@ -216,7 +216,11 @@ const BookingDetailsPage = () => {
         specialInstructions: booking.specialRequests || "",
         frequency: booking.reoccurrence || "one-time",
         charge: booking.totalPrice?.toString() || "0",
-        stripePaymentMethodId: paymentMethodId, // Include payment method ID
+        squareFootage: booking.squareFootage || "N/A",
+        pets: booking.pets || "N/A",
+        lastCleaning: booking.lastCleaning || "N/A",
+        discountCode: booking.discountCode || "",
+        stripePaymentMethodId: paymentMethodId, //* include payment method ID
       };
 
       const response = await createBooking(payload);
