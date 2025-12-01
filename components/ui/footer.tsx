@@ -22,8 +22,9 @@ const Footer = () => {
             </div>
             {/* Tagline */}
             <p className="text-[15px] leading-[22px] text-[#CAC7D1] font-normal">
-              Sparkly Made Effortless<br /> Professional cleaning services to help you
-              reclaim your time and love your home.
+              Sparkly Made Effortless
+              <br /> Professional cleaning services to help you reclaim your
+              time and love your home.
             </p>
             {/* <p className="text-[15px] leading-[22px] text-[#CAC7D1] font-normal">
               Professional cleaning services to help you reclaim your time and
@@ -72,10 +73,10 @@ const Footer = () => {
                   <div className="flex items-start gap-3">
                     <div className="w-1.5 h-1.5 bg-white rounded-full mt-1.5 shrink-0" />
                     <a
-                      href="tel:+2348013425496"
+                      href="tel: +1 202-294-2742"
                       className="text-[14px] text-[#CAC7D1] hover:text-white transition-colors font-normal"
                     >
-                      +234 801 342 5496
+                      +1 202-294-2742
                     </a>
                   </div>
                 </div>
