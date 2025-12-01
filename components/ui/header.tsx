@@ -44,6 +44,9 @@ const Header = () => {
             <Link href="/bookings">
               <li>My Bookings</li>
             </Link>
+            <Link href="/track">
+              <li>Track</li>
+            </Link>
           </ul>
         </div>
 
@@ -85,6 +88,9 @@ const Header = () => {
             </Link>
             <Link href="/bookings">
               <li>My Bookings</li>
+            </Link>
+            <Link href="/track">
+              <li>Track</li>
             </Link>
             <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-2">

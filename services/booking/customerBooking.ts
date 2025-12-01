@@ -37,6 +37,18 @@ export const getBookingInfo = async (uid: string) => {
   }
 };
 
+export const trackBooking = async (uid: string) => {
+  try {
+    const response = await publicApi.get(
+      `/api/v1/booking/getBookingByBookingId?bookingId=${uid}`
+    );
+    return response?.data;
+  } catch (error) {
+    console.log("Error fetching booking info:", error);
+    throw new Error(extractErrorMessage(error));
+  }
+};
+
 export const getPendingBookingInfo = async (uid: string) => {
   try {
     const response = await publicApi.get(
