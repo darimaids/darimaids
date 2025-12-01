@@ -245,7 +245,7 @@ const Booking = () => {
     }
 
     setLoading(true);
-    console.log("Submitting booking:", { booking, payment });
+    // console.log("Submitting booking:", { booking, payment });
 
     setTimeout(() => {
       setLoading(false);

@@ -236,8 +236,8 @@ const BookingDetailsPage = () => {
       }
     },
     onError: (error: any) => {
-      console.error("Booking creation failed:", error);
-      toast.error(error || "Failed to create booking. Please try again.");
+      console.error("Booking creation failed:", error?.message);
+      toast.error(error?.message || "Failed to create booking. Please try again.");
     },
   });
 
