@@ -136,7 +136,10 @@ const Hero = () => {
                 value={payment.email}
                 className="w-full"
                 placeholder="Enter your Email address"
-                onChange={(e) => updatePayment("email", e.target.value)}
+                onChange={(e) => {
+                  updatePayment("email", e.target.value);
+                  localStorage.setItem("userEmail", e.target.value);
+                }}
               />
             </div>
           </div>
