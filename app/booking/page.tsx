@@ -470,7 +470,7 @@ const Booking = () => {
 
                 <div>
                   <label className="block text-[14px] text-[#666] dark:text-gray-300 mb-1">
-                    Apartment Number(Optional) *
+                    Apartment Number(Optional)
                   </label>
                   <Input
                     placeholder="Enter your apartment number"
